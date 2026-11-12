@@ -1,12 +1,14 @@
 <template>
 	<div class="h-12 bg-white border-b px-12 flex items-center">
 		<div class="flex items-center space-x-1.5">
-			<a href="/desk/hr-setup" class="text-gray-600 hover:text-gray-700 flex items-center">
+			<router-link to="/desk/hr-setup" class="text-gray-900 hover:text-blue-600 font-semibold flex items-center transition">
 				<FrappeHRLogo class="h-6 w-6 mr-2.5" />
-				Frappe HR
-			</a>
-			<FeatherIcon name="chevron-right" class="h-4 w-4" />
-			<span class="font-medium">Roster</span>
+				HR Setup
+			</router-link>
+			<FeatherIcon name="chevron-right" class="h-4 w-4 text-gray-400" />
+			<router-link to="/" class="font-medium text-gray-600 hover:text-gray-900 transition">
+				Roster
+			</router-link>
 		</div>
 		<Dropdown
 			class="ml-auto"

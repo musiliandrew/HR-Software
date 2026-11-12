@@ -7,6 +7,19 @@ const routes = [
 		component: () => import("./views/Home.vue"),
 	},
 	{
+		path: "/desk/hr-setup",
+		name: "HRSetup",
+		component: () => import("./views/HRSetup.vue"),
+	},
+	{
+		path: "/app/hr-setup",
+		redirect: "/desk/hr-setup",
+	},
+	{
+		path: "/hr-setup",
+		redirect: "/desk/hr-setup",
+	},
+	{
 		path: "/hr/roster",
 		redirect: "/",
 	},
