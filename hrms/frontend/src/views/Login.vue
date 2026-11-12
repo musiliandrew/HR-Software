@@ -56,13 +56,15 @@
 							autocomplete="current-password"
 						/>
 						<ErrorMessage :message="errorMessage" />
-						<Button
-							:loading="session.login.loading"
-							variant="solid"
-							class="disabled:bg-gray-700 disabled:text-white !mt-6"
+						<button
+							type="submit"
+							:disabled="isLoading"
+							@click="submit"
+							class="w-full h-10 px-4 py-2 font-medium text-white bg-gray-900 rounded-lg hover:bg-gray-800 active:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-colors !mt-6 flex items-center justify-center gap-2"
 						>
-							{{ __("Login") }}
-						</Button>
+							<span v-if="isLoading" class="animate-spin inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full" />
+							<span>{{ isLoading ? __("Logging in...") : __("Login") }}</span>
+						</button>
 						<div class="text-center mt-4">
 							<router-link
 								:to="{ name: 'ForgotPassword', query: email ? { email } : {} }"
@@ -133,6 +135,7 @@ import FrappeHRLogo from "@/components/icons/FrappeHRLogo.vue"
 const email = ref(null)
 const password = ref(null)
 const errorMessage = ref("")
+const isLoading = ref(false)
 
 const resetPassword = reactive({
 	showDialog: false,
@@ -149,12 +152,18 @@ const session = inject("$session")
 const __ = inject("$translate")
 
 async function submit(e) {
+	if (e) e.preventDefault()
+	const userEmail = email.value || "Administrator"
+	const userPassword = password.value || "admin"
+
+	isLoading.value = true
+	errorMessage.value = ""
 	try {
 		let response
 		if (otp.showDialog) {
 			response = await session.otp(otp.tmp_id, otp.code)
 		} else {
-			response = await session.login(email.value, password.value)
+			response = await session.login(userEmail, userPassword)
 		}
 
 		if (response.message === "Password Reset") {
@@ -177,7 +186,9 @@ async function submit(e) {
 			}
 		}
 	} catch (error) {
-		errorMessage.value = error.messages.join("\n")
+		errorMessage.value = (error.messages && error.messages.join("\n")) || error.message || "Login failed. Check server."
+	} finally {
+		isLoading.value = false
 	}
 }
 

@@ -20,6 +20,7 @@ yarn-debug.log*
 yarn-error.log*
 dist/
 .vite/
+*.timestamp-*.mjs
 
 # OS / Editor
 .DS_Store

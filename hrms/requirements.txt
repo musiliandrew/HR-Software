@@ -1,0 +1,7 @@
+# Core dependencies for HR Software
+python-dateutil>=2.8.2
+requests>=2.31.0
+pypika>=0.48.9
+click>=8.1.7
+python-dotenv>=1.0.1
+psycopg2-binary>=2.9.9
