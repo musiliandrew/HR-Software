@@ -6,10 +6,14 @@ const routes = [
 		name: "Home",
 		component: () => import("./views/Home.vue"),
 	},
+	{
+		path: "/hr/roster",
+		redirect: "/",
+	},
 ];
 
 const router = createRouter({
-	history: createWebHistory("/hr/roster"),
+	history: createWebHistory(),
 	routes,
 });
 

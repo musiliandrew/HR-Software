@@ -375,6 +375,19 @@ class HRBackendHandler(BaseHTTPRequestHandler):
             })
             return
 
+        # 16. Roster Management Desktop Suite
+        if "get_default_company" in path:
+            self._send_json(200, {"message": "HR Software Co"})
+            return
+
+        if "get_permitted_filter_doctypes" in path:
+            self._send_json(200, {"message": ["Department", "Branch", "Designation"]})
+            return
+
+        if "get_events" in path:
+            self._send_json(200, {"message": {"holidays": {}, "leaves": {}, "shifts": {}}})
+            return
+
         self._send_json(200, {"message": []})
 
     def do_POST(self):
