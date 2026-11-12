@@ -1,6 +1,7 @@
 """
-Database migration & seeder for Neon PostgreSQL.
-Creates the relational schema and populates rich sample data for HR Software.
+Database migration & multi-tenant SaaS seeder for Neon PostgreSQL.
+Establishes Company (Tenant) boundaries, subscription plans, seat allocations,
+and tenant-scoped employee & payroll records.
 """
 
 import os
@@ -20,31 +21,68 @@ def get_connection():
     return psycopg2.connect(DATABASE_URL)
 
 def create_schema(cur):
-    print("Creating tables in Neon PostgreSQL...")
+    print("Migrating schema to Multi-Tenant B2B SaaS architecture...")
 
-    # Users table
+    # 1. Tenants (Companies / Organizations)
     cur.execute("""
-    CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
-        name VARCHAR(100) UNIQUE NOT NULL,
-        email VARCHAR(150) UNIQUE NOT NULL,
-        first_name VARCHAR(100),
-        full_name VARCHAR(150),
-        roles TEXT[] DEFAULT '{"Employee"}',
+    CREATE TABLE IF NOT EXISTS tenants (
+        id VARCHAR(50) PRIMARY KEY,
+        name VARCHAR(150) NOT NULL,
+        slug VARCHAR(100) UNIQUE NOT NULL,
+        billing_email VARCHAR(150) NOT NULL,
+        plan_tier VARCHAR(50) DEFAULT 'Growth',
+        seat_limit INT DEFAULT 50,
+        status VARCHAR(50) DEFAULT 'Active',
+        currency VARCHAR(10) DEFAULT 'USD',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
     """)
 
-    # Employees table
+    # 2. Subscriptions & Billing
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS subscriptions (
+        id SERIAL PRIMARY KEY,
+        tenant_id VARCHAR(50) REFERENCES tenants(id) ON DELETE CASCADE,
+        stripe_customer_id VARCHAR(100),
+        stripe_subscription_id VARCHAR(100),
+        plan_name VARCHAR(50) NOT NULL,
+        monthly_price NUMERIC(10, 2) NOT NULL,
+        billing_cycle VARCHAR(20) DEFAULT 'monthly',
+        status VARCHAR(50) DEFAULT 'active',
+        current_period_end TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    """)
+
+    # 3. Users (with tenant linkage & RBAC)
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        tenant_id VARCHAR(50) REFERENCES tenants(id) ON DELETE CASCADE,
+        name VARCHAR(100) UNIQUE NOT NULL,
+        email VARCHAR(150) UNIQUE NOT NULL,
+        first_name VARCHAR(100),
+        full_name VARCHAR(150),
+        role VARCHAR(50) DEFAULT 'Employee',
+        roles TEXT[] DEFAULT '{"Employee"}',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    """)
+    # Add tenant_id if table previously existed without it
+    cur.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS tenant_id VARCHAR(50) REFERENCES tenants(id) ON DELETE CASCADE;")
+    cur.execute("ALTER TABLE users ADD COLUMN IF NOT EXISTS role VARCHAR(50) DEFAULT 'Employee';")
+
+    # 4. Employees
     cur.execute("""
     CREATE TABLE IF NOT EXISTS employees (
         id SERIAL PRIMARY KEY,
+        tenant_id VARCHAR(50) REFERENCES tenants(id) ON DELETE CASCADE,
         name VARCHAR(50) UNIQUE NOT NULL,
         employee_name VARCHAR(150) NOT NULL,
         first_name VARCHAR(100),
         designation VARCHAR(100),
         department VARCHAR(100),
-        company VARCHAR(100) DEFAULT 'HR Software Co',
+        company VARCHAR(100),
         reports_to VARCHAR(50),
         user_id VARCHAR(150),
         status VARCHAR(50) DEFAULT 'Active',
@@ -52,20 +90,24 @@ def create_schema(cur):
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
     """)
+    cur.execute("ALTER TABLE employees ADD COLUMN IF NOT EXISTS tenant_id VARCHAR(50) REFERENCES tenants(id) ON DELETE CASCADE;")
 
-    # Leave Types table
+    # 5. Leave Types
     cur.execute("""
     CREATE TABLE IF NOT EXISTS leave_types (
         name VARCHAR(100) PRIMARY KEY,
+        tenant_id VARCHAR(50) REFERENCES tenants(id) ON DELETE CASCADE,
         max_days_allowed INT DEFAULT 21,
         is_carry_forward BOOLEAN DEFAULT true
     );
     """)
+    cur.execute("ALTER TABLE leave_types ADD COLUMN IF NOT EXISTS tenant_id VARCHAR(50) REFERENCES tenants(id) ON DELETE CASCADE;")
 
-    # Leave Allocations table
+    # 6. Leave Allocations
     cur.execute("""
     CREATE TABLE IF NOT EXISTS leave_allocations (
         id SERIAL PRIMARY KEY,
+        tenant_id VARCHAR(50) REFERENCES tenants(id) ON DELETE CASCADE,
         employee VARCHAR(50) REFERENCES employees(name) ON DELETE CASCADE,
         leave_type VARCHAR(100) REFERENCES leave_types(name) ON DELETE CASCADE,
         total_allocated INT DEFAULT 0,
@@ -73,11 +115,13 @@ def create_schema(cur):
         year INT DEFAULT 2026
     );
     """)
+    cur.execute("ALTER TABLE leave_allocations ADD COLUMN IF NOT EXISTS tenant_id VARCHAR(50) REFERENCES tenants(id) ON DELETE CASCADE;")
 
-    # Leave Applications table
+    # 7. Leave Applications
     cur.execute("""
     CREATE TABLE IF NOT EXISTS leave_applications (
         id SERIAL PRIMARY KEY,
+        tenant_id VARCHAR(50) REFERENCES tenants(id) ON DELETE CASCADE,
         name VARCHAR(50) UNIQUE NOT NULL,
         employee VARCHAR(50) REFERENCES employees(name) ON DELETE CASCADE,
         employee_name VARCHAR(150),
@@ -92,11 +136,13 @@ def create_schema(cur):
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
     """)
+    cur.execute("ALTER TABLE leave_applications ADD COLUMN IF NOT EXISTS tenant_id VARCHAR(50) REFERENCES tenants(id) ON DELETE CASCADE;")
 
-    # Employee Checkins (Clock-in / Clock-out)
+    # 8. Employee Checkins
     cur.execute("""
     CREATE TABLE IF NOT EXISTS employee_checkins (
         id SERIAL PRIMARY KEY,
+        tenant_id VARCHAR(50) REFERENCES tenants(id) ON DELETE CASCADE,
         name VARCHAR(50) UNIQUE NOT NULL,
         employee VARCHAR(50) REFERENCES employees(name) ON DELETE CASCADE,
         employee_name VARCHAR(150),
@@ -107,20 +153,24 @@ def create_schema(cur):
         longitude NUMERIC(10, 6)
     );
     """)
+    cur.execute("ALTER TABLE employee_checkins ADD COLUMN IF NOT EXISTS tenant_id VARCHAR(50) REFERENCES tenants(id) ON DELETE CASCADE;")
 
-    # Shifts table
+    # 9. Shifts
     cur.execute("""
     CREATE TABLE IF NOT EXISTS shift_types (
         name VARCHAR(100) PRIMARY KEY,
+        tenant_id VARCHAR(50) REFERENCES tenants(id) ON DELETE CASCADE,
         start_time TIME NOT NULL,
         end_time TIME NOT NULL
     );
     """)
+    cur.execute("ALTER TABLE shift_types ADD COLUMN IF NOT EXISTS tenant_id VARCHAR(50) REFERENCES tenants(id) ON DELETE CASCADE;")
 
-    # Shift Requests
+    # 10. Shift Requests
     cur.execute("""
     CREATE TABLE IF NOT EXISTS shift_requests (
         id SERIAL PRIMARY KEY,
+        tenant_id VARCHAR(50) REFERENCES tenants(id) ON DELETE CASCADE,
         name VARCHAR(50) UNIQUE NOT NULL,
         employee VARCHAR(50) REFERENCES employees(name) ON DELETE CASCADE,
         employee_name VARCHAR(150),
@@ -132,11 +182,13 @@ def create_schema(cur):
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
     """)
+    cur.execute("ALTER TABLE shift_requests ADD COLUMN IF NOT EXISTS tenant_id VARCHAR(50) REFERENCES tenants(id) ON DELETE CASCADE;")
 
-    # Attendance Requests
+    # 11. Attendance Requests
     cur.execute("""
     CREATE TABLE IF NOT EXISTS attendance_requests (
         id SERIAL PRIMARY KEY,
+        tenant_id VARCHAR(50) REFERENCES tenants(id) ON DELETE CASCADE,
         name VARCHAR(50) UNIQUE NOT NULL,
         employee VARCHAR(50) REFERENCES employees(name) ON DELETE CASCADE,
         employee_name VARCHAR(150),
@@ -148,18 +200,22 @@ def create_schema(cur):
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
     """)
+    cur.execute("ALTER TABLE attendance_requests ADD COLUMN IF NOT EXISTS tenant_id VARCHAR(50) REFERENCES tenants(id) ON DELETE CASCADE;")
 
-    # Expense Claim Types
+    # 12. Expense Claim Types
     cur.execute("""
     CREATE TABLE IF NOT EXISTS expense_claim_types (
-        name VARCHAR(100) PRIMARY KEY
+        name VARCHAR(100) PRIMARY KEY,
+        tenant_id VARCHAR(50) REFERENCES tenants(id) ON DELETE CASCADE
     );
     """)
+    cur.execute("ALTER TABLE expense_claim_types ADD COLUMN IF NOT EXISTS tenant_id VARCHAR(50) REFERENCES tenants(id) ON DELETE CASCADE;")
 
-    # Expense Claims
+    # 13. Expense Claims
     cur.execute("""
     CREATE TABLE IF NOT EXISTS expense_claims (
         id SERIAL PRIMARY KEY,
+        tenant_id VARCHAR(50) REFERENCES tenants(id) ON DELETE CASCADE,
         name VARCHAR(50) UNIQUE NOT NULL,
         employee VARCHAR(50) REFERENCES employees(name) ON DELETE CASCADE,
         employee_name VARCHAR(150),
@@ -171,11 +227,13 @@ def create_schema(cur):
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
     """)
+    cur.execute("ALTER TABLE expense_claims ADD COLUMN IF NOT EXISTS tenant_id VARCHAR(50) REFERENCES tenants(id) ON DELETE CASCADE;")
 
-    # Salary Slips
+    # 14. Salary Slips
     cur.execute("""
     CREATE TABLE IF NOT EXISTS salary_slips (
         id SERIAL PRIMARY KEY,
+        tenant_id VARCHAR(50) REFERENCES tenants(id) ON DELETE CASCADE,
         name VARCHAR(50) UNIQUE NOT NULL,
         employee VARCHAR(50) REFERENCES employees(name) ON DELETE CASCADE,
         employee_name VARCHAR(150),
@@ -186,132 +244,72 @@ def create_schema(cur):
         status VARCHAR(50) DEFAULT 'Submitted'
     );
     """)
+    cur.execute("ALTER TABLE salary_slips ADD COLUMN IF NOT EXISTS tenant_id VARCHAR(50) REFERENCES tenants(id) ON DELETE CASCADE;")
 
-    print("Tables created successfully.")
+    print("Multi-tenant tables and constraints successfully verified.")
 
 def seed_data(cur):
-    print("Seeding sample records into Neon PostgreSQL...")
+    print("Seeding multi-tenant companies & subscription plans...")
 
-    # 1. Users
+    # 1. Tenants (Companies)
     cur.execute("""
-    INSERT INTO users (name, email, first_name, full_name, roles) VALUES
-    ('Administrator', 'admin@example.com', 'Admin', 'Administrator', '{"System Manager", "HR Manager", "Employee", "HR User"}'),
-    ('andrew@example.com', 'andrew@example.com', 'Andrew', 'Andrew Musili', '{"System Manager", "HR Manager", "Employee"}'),
-    ('sarah.connor@example.com', 'sarah.connor@example.com', 'Sarah', 'Sarah Connor', '{"Employee"}'),
-    ('michael.scott@example.com', 'michael.scott@example.com', 'Michael', 'Michael Scott', '{"Employee"}'),
-    ('dwight.schrute@example.com', 'dwight.schrute@example.com', 'Dwight', 'Dwight Schrute', '{"Employee"}')
-    ON CONFLICT (name) DO UPDATE SET roles = EXCLUDED.roles;
+    INSERT INTO tenants (id, name, slug, billing_email, plan_tier, seat_limit, status) VALUES
+    ('TENANT-ACME', 'Acme Corporation', 'acme', 'billing@acme.com', 'Growth', 50, 'Active'),
+    ('TENANT-GLOBEX', 'Globex Industries', 'globex', 'finance@globex.com', 'Starter', 15, 'Active')
+    ON CONFLICT (id) DO UPDATE SET 
+        name = EXCLUDED.name,
+        plan_tier = EXCLUDED.plan_tier,
+        seat_limit = EXCLUDED.seat_limit;
     """)
 
-    # 2. Employees
+    # 2. Subscriptions
     cur.execute("""
-    INSERT INTO employees (name, employee_name, first_name, designation, department, company, reports_to, user_id, status) VALUES
-    ('HR-EMP-00001', 'Administrator', 'Admin', 'HR Director', 'Human Resources', 'HR Software Co', '', 'Administrator', 'Active'),
-    ('HR-EMP-00002', 'Andrew Musili', 'Andrew', 'Lead Software Engineer', 'Engineering', 'HR Software Co', 'HR-EMP-00001', 'andrew@example.com', 'Active'),
-    ('HR-EMP-00003', 'Sarah Connor', 'Sarah', 'Operations Lead', 'Operations', 'HR Software Co', 'HR-EMP-00001', 'sarah.connor@example.com', 'Active'),
-    ('HR-EMP-00004', 'Michael Scott', 'Michael', 'Regional Manager', 'Management', 'HR Software Co', 'HR-EMP-00001', 'michael.scott@example.com', 'Active'),
-    ('HR-EMP-00005', 'Dwight Schrute', 'Dwight', 'Sales Executive', 'Sales', 'HR Software Co', 'HR-EMP-00004', 'dwight.schrute@example.com', 'Active')
-    ON CONFLICT (name) DO UPDATE SET designation = EXCLUDED.designation;
+    DELETE FROM subscriptions WHERE tenant_id IN ('TENANT-ACME', 'TENANT-GLOBEX');
+    INSERT INTO subscriptions (tenant_id, stripe_customer_id, stripe_subscription_id, plan_name, monthly_price, billing_cycle, status, current_period_end) VALUES
+    ('TENANT-ACME', 'cus_acme_live123', 'sub_acme_growth99', 'Growth Plan (50 Seats)', 79.00, 'monthly', 'active', CURRENT_TIMESTAMP + INTERVAL '25 days'),
+    ('TENANT-GLOBEX', 'cus_globex_live456', 'sub_globex_starter11', 'Starter Plan (15 Seats)', 29.00, 'monthly', 'active', CURRENT_TIMESTAMP + INTERVAL '18 days');
     """)
 
-    # 3. Leave Types
+    # 3. Users for Acme Corp
     cur.execute("""
-    INSERT INTO leave_types (name, max_days_allowed) VALUES
-    ('Annual Leave', 21),
-    ('Casual Leave', 7),
-    ('Sick Leave', 10),
-    ('Maternity Leave', 90),
-    ('Compensatory Off', 5)
-    ON CONFLICT (name) DO NOTHING;
+    INSERT INTO users (name, tenant_id, email, first_name, full_name, role, roles) VALUES
+    ('Administrator', 'TENANT-ACME', 'admin@example.com', 'Admin', 'HR Lead (Acme)', 'Company Owner', '{"Company Owner", "System Manager", "HR Manager", "Employee"}'),
+    ('andrew@example.com', 'TENANT-ACME', 'andrew@example.com', 'Andrew', 'Andrew Musili', 'HR Admin', '{"HR Manager", "Employee"}'),
+    ('sarah.connor@example.com', 'TENANT-ACME', 'sarah.connor@example.com', 'Sarah', 'Sarah Connor', 'Employee', '{"Employee"}'),
+    ('michael.scott@example.com', 'TENANT-ACME', 'michael.scott@example.com', 'Michael', 'Michael Scott', 'Employee', '{"Employee"}'),
+    ('dwight.schrute@example.com', 'TENANT-ACME', 'dwight.schrute@example.com', 'Dwight', 'Dwight Schrute', 'Employee', '{"Employee"}')
+    ON CONFLICT (name) DO UPDATE SET 
+        tenant_id = EXCLUDED.tenant_id,
+        role = EXCLUDED.role,
+        roles = EXCLUDED.roles;
     """)
 
-    # 4. Leave Allocations for Administrator
+    # 4. Employees for Acme Corp
     cur.execute("""
-    DELETE FROM leave_allocations WHERE employee = 'HR-EMP-00001';
-    INSERT INTO leave_allocations (employee, leave_type, total_allocated, leaves_remaining, year) VALUES
-    ('HR-EMP-00001', 'Annual Leave', 21, 18, 2026),
-    ('HR-EMP-00001', 'Casual Leave', 7, 5, 2026),
-    ('HR-EMP-00001', 'Sick Leave', 10, 10, 2026),
-    ('HR-EMP-00001', 'Compensatory Off', 5, 3, 2026);
+    INSERT INTO employees (name, tenant_id, employee_name, first_name, designation, department, company, reports_to, user_id, status) VALUES
+    ('HR-EMP-00001', 'TENANT-ACME', 'Administrator', 'Admin', 'HR Director & VP', 'Human Resources', 'Acme Corporation', '', 'Administrator', 'Active'),
+    ('HR-EMP-00002', 'TENANT-ACME', 'Andrew Musili', 'Andrew', 'Lead Software Engineer', 'Engineering', 'Acme Corporation', 'HR-EMP-00001', 'andrew@example.com', 'Active'),
+    ('HR-EMP-00003', 'TENANT-ACME', 'Sarah Connor', 'Sarah', 'Operations Lead', 'Operations', 'Acme Corporation', 'HR-EMP-00001', 'sarah.connor@example.com', 'Active'),
+    ('HR-EMP-00004', 'TENANT-ACME', 'Michael Scott', 'Michael', 'Regional Manager', 'Management', 'Acme Corporation', 'HR-EMP-00001', 'michael.scott@example.com', 'Active'),
+    ('HR-EMP-00005', 'TENANT-ACME', 'Dwight Schrute', 'Dwight', 'Sales Executive', 'Sales', 'Acme Corporation', 'HR-EMP-00004', 'dwight.schrute@example.com', 'Active')
+    ON CONFLICT (name) DO UPDATE SET 
+        tenant_id = EXCLUDED.tenant_id,
+        company = EXCLUDED.company;
     """)
 
-    # 5. Leave Applications
-    cur.execute("""
-    INSERT INTO leave_applications (name, employee, employee_name, leave_type, from_date, to_date, total_leave_days, status, docstatus, description) VALUES
-    ('HR-LV-2026-00001', 'HR-EMP-00001', 'Administrator', 'Annual Leave', '2026-11-20', '2026-11-22', 3, 'Approved', 1, 'Short trip with family'),
-    ('HR-LV-2026-00002', 'HR-EMP-00001', 'Administrator', 'Casual Leave', '2026-12-05', '2026-12-06', 2, 'Pending', 0, 'Personal appointments'),
-    ('HR-LV-2026-00003', 'HR-EMP-00002', 'Andrew Musili', 'Annual Leave', '2026-11-25', '2026-11-28', 4, 'Approved', 1, 'End of year vacation')
-    ON CONFLICT (name) DO NOTHING;
-    """)
+    # Link existing records to Acme Corporation
+    cur.execute("UPDATE leave_types SET tenant_id = 'TENANT-ACME' WHERE tenant_id IS NULL;")
+    cur.execute("UPDATE leave_allocations SET tenant_id = 'TENANT-ACME' WHERE tenant_id IS NULL;")
+    cur.execute("UPDATE leave_applications SET tenant_id = 'TENANT-ACME' WHERE tenant_id IS NULL;")
+    cur.execute("UPDATE employee_checkins SET tenant_id = 'TENANT-ACME' WHERE tenant_id IS NULL;")
+    cur.execute("UPDATE shift_types SET tenant_id = 'TENANT-ACME' WHERE tenant_id IS NULL;")
+    cur.execute("UPDATE shift_requests SET tenant_id = 'TENANT-ACME' WHERE tenant_id IS NULL;")
+    cur.execute("UPDATE attendance_requests SET tenant_id = 'TENANT-ACME' WHERE tenant_id IS NULL;")
+    cur.execute("UPDATE expense_claim_types SET tenant_id = 'TENANT-ACME' WHERE tenant_id IS NULL;")
+    cur.execute("UPDATE expense_claims SET tenant_id = 'TENANT-ACME' WHERE tenant_id IS NULL;")
+    cur.execute("UPDATE salary_slips SET tenant_id = 'TENANT-ACME' WHERE tenant_id IS NULL;")
 
-    # 6. Check-ins
-    now = datetime.now()
-    cur.execute("""
-    INSERT INTO employee_checkins (name, employee, employee_name, log_type, time, device_id) VALUES
-    ('CHECKIN-001', 'HR-EMP-00001', 'Administrator', 'IN', %s, 'Web PWA'),
-    ('CHECKIN-002', 'HR-EMP-00001', 'Administrator', 'OUT', %s, 'Web PWA'),
-    ('CHECKIN-003', 'HR-EMP-00002', 'Andrew Musili', 'IN', %s, 'Mobile PWA')
-    ON CONFLICT (name) DO NOTHING;
-    """, (
-        now - timedelta(hours=4),
-        now - timedelta(minutes=45),
-        now - timedelta(hours=3)
-    ))
-
-    # 7. Shift Types
-    cur.execute("""
-    INSERT INTO shift_types (name, start_time, end_time) VALUES
-    ('Morning Shift', '08:00:00', '16:00:00'),
-    ('General Shift', '09:00:00', '17:00:00'),
-    ('Evening Shift', '16:00:00', '00:00:00')
-    ON CONFLICT (name) DO NOTHING;
-    """)
-
-    # 8. Shift Requests
-    cur.execute("""
-    INSERT INTO shift_requests (name, employee, employee_name, shift_type, from_date, to_date, status, docstatus) VALUES
-    ('HR-SR-2026-00001', 'HR-EMP-00001', 'Administrator', 'General Shift', '2026-11-01', '2026-11-30', 'Approved', 1),
-    ('HR-SR-2026-00002', 'HR-EMP-00002', 'Andrew Musili', 'Morning Shift', '2026-11-01', '2026-11-30', 'Approved', 1)
-    ON CONFLICT (name) DO NOTHING;
-    """)
-
-    # 9. Attendance Requests
-    cur.execute("""
-    INSERT INTO attendance_requests (name, employee, employee_name, from_date, to_date, reason, status, docstatus) VALUES
-    ('HR-ATT-2026-00001', 'HR-EMP-00001', 'Administrator', '2026-11-10', '2026-11-10', 'Work From Home', 'Approved', 1),
-    ('HR-ATT-2026-00002', 'HR-EMP-00002', 'Andrew Musili', '2026-11-08', '2026-11-08', 'On Duty - Client Visit', 'Approved', 1)
-    ON CONFLICT (name) DO NOTHING;
-    """)
-
-    # 10. Expense Claim Types
-    cur.execute("""
-    INSERT INTO expense_claim_types (name) VALUES
-    ('Travel'),
-    ('Meals & Entertainment'),
-    ('Office Supplies'),
-    ('Telephone & Internet'),
-    ('Medical Expenses')
-    ON CONFLICT (name) DO NOTHING;
-    """)
-
-    # 11. Expense Claims
-    cur.execute("""
-    INSERT INTO expense_claims (name, employee, employee_name, total_claimed_amount, total_sanctioned_amount, status, docstatus, posting_date) VALUES
-    ('HR-EXP-2026-00001', 'HR-EMP-00001', 'Administrator', 285.50, 285.50, 'Approved', 1, '2026-11-05'),
-    ('HR-EXP-2026-00002', 'HR-EMP-00002', 'Andrew Musili', 120.00, 120.00, 'Approved', 1, '2026-11-09')
-    ON CONFLICT (name) DO NOTHING;
-    """)
-
-    # 12. Salary Slips
-    cur.execute("""
-    INSERT INTO salary_slips (name, employee, employee_name, start_date, end_date, gross_pay, net_pay, status) VALUES
-    ('HR-SS-2026-10-001', 'HR-EMP-00001', 'Administrator', '2026-10-01', '2026-10-31', 6500.00, 5200.00, 'Submitted'),
-    ('HR-SS-2026-09-001', 'HR-EMP-00001', 'Administrator', '2026-09-01', '2026-09-30', 6500.00, 5200.00, 'Submitted'),
-    ('HR-SS-2026-10-002', 'HR-EMP-00002', 'Andrew Musili', '2026-10-01', '2026-10-31', 5800.00, 4700.00, 'Submitted')
-    ON CONFLICT (name) DO NOTHING;
-    """)
-
-    print("Data seeded successfully!")
+    print("Multi-tenant seeding completed successfully!")
 
 def main():
     conn = get_connection()
@@ -321,7 +319,7 @@ def main():
     seed_data(cur)
     cur.close()
     conn.close()
-    print("Database initialization complete.")
+    print("Multi-tenant database initialization finished.")
 
 if __name__ == "__main__":
     main()
