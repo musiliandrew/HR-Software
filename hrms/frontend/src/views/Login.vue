@@ -184,7 +184,7 @@ async function submit(e) {
 const user_pass_login_disabled = createResource({
 	url: "hrms.api.system_settings.get_user_pass_login_disabled",
 	method: 'GET',
-	initialData: 1,
+	initialData: 0,
 	auto: true,
 })
 
