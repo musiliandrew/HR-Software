@@ -14,6 +14,13 @@
 				<div class="flex items-center space-x-3">
 					<router-link
 						to="/"
+						class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-indigo-600 bg-white hover:bg-indigo-50 transition"
+					>
+						<span class="h-4 w-4 rounded bg-indigo-600 text-white flex items-center justify-center font-bold text-[10px] mr-2">E</span>
+						Eliza Landing
+					</router-link>
+					<router-link
+						to="/roster"
 						class="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 transition"
 					>
 						<FeatherIcon name="calendar" class="h-4 w-4 mr-2 text-gray-500" />
