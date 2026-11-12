@@ -1,5 +1,4 @@
-# Copyright (c) 2018, Frappe Technologies Pvt. Ltd. and Contributors
-# See license.txt
+﻿# See license.txt
 
 import frappe
 from frappe.utils import add_days, add_months, get_year_ending, get_year_start, getdate
@@ -442,7 +441,7 @@ class TestAttendanceRequest(HRMSTestSuite):
 		)
 		self.assertEqual(assignment_status, "Inactive")
 
-		# Attendance request for the now-expired shift period — shift should still be auto-fetched
+		# Attendance request for the now-expired shift period â€” shift should still be auto-fetched
 		attendance_request = frappe.get_doc(
 			{
 				"doctype": "Attendance Request",

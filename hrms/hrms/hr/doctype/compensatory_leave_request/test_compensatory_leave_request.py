@@ -1,5 +1,4 @@
-# Copyright (c) 2018, Frappe Technologies Pvt. Ltd. and Contributors
-# See license.txt
+﻿# See license.txt
 
 import frappe
 from frappe.utils import add_days, add_months, getdate, today

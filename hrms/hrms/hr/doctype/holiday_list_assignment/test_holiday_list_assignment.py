@@ -1,5 +1,4 @@
-# Copyright (c) 2025, Frappe Technologies Pvt. Ltd. and Contributors
-# See license.txt
+﻿# See license.txt
 
 from contextlib import contextmanager
 

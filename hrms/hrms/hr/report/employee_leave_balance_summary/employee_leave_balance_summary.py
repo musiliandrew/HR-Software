@@ -1,8 +1,4 @@
-# Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
-# License: GNU General Public License v3. See license.txt
-
-
-import frappe
+﻿import frappe
 from frappe import _
 
 from hrms.hr.doctype.leave_application.leave_application import get_leave_details

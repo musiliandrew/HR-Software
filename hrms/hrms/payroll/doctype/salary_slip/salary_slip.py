@@ -1,8 +1,4 @@
-# Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
-# License: GNU General Public License v3. See license.txt
-
-
-import datetime
+﻿import datetime
 
 import frappe
 from frappe import _, msgprint
@@ -1449,7 +1445,7 @@ class SalarySlip(TransactionBase):
 			self.set_salary_structure_assignment()
 
 		data = get_component_eval_context(self.employee, self._salary_structure_assignment)
-		# Overlay salary-slip fields (payment_days, gross_pay, start_date, …) last, so the
+		# Overlay salary-slip fields (payment_days, gross_pay, start_date, â€¦) last, so the
 		# actual period context wins on a name collision with an Employee field (e.g. a saved
 		# payslip keeps its own department/branch snapshot, not the employee's current one).
 		slip_data = self.as_dict()

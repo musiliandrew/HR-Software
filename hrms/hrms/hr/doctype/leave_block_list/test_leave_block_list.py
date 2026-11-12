@@ -1,7 +1,4 @@
-# Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
-# License: GNU General Public License v3. See license.txt
-
-import frappe
+﻿import frappe
 from frappe.utils import getdate
 
 from hrms.hr.doctype.leave_block_list.leave_block_list import get_applicable_block_dates

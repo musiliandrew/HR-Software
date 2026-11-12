@@ -1,7 +1,4 @@
-# Copyright (c) 2021, Frappe Technologies Pvt. Ltd. and Contributors
-# License: GNU General Public License v3. See license.txt
-
-import frappe
+﻿import frappe
 from frappe import _
 from frappe.query_builder import DatePart
 from frappe.query_builder.functions import Extract
@@ -121,10 +118,10 @@ def get_birthday_reminder_text_and_message(birthday_persons):
 		person_names = [d["name"] for d in birthday_persons]
 		birthday_person_text = comma_sep(person_names, frappe._("{0} & {1}"), False)
 
-	reminder_text = _("Today is {0}'s birthday 🎉").format(birthday_person_text)
+	reminder_text = _("Today is {0}'s birthday ðŸŽ‰").format(birthday_person_text)
 	message = _("A friendly reminder of an important date for our team.")
 	message += "<br>"
-	message += _("Everyone, let’s congratulate {0} on their birthday.").format(birthday_person_text)
+	message += _("Everyone, letâ€™s congratulate {0} on their birthday.").format(birthday_person_text)
 
 	return reminder_text, message
 
@@ -140,7 +137,7 @@ def send_birthday_reminder(recipients, reminder_text, birthday_persons, message,
 			birthday_persons=birthday_persons,
 			message=message,
 		),
-		header=_("Birthday Reminder 🎂"),
+		header=_("Birthday Reminder ðŸŽ‚"),
 	)
 
 
@@ -209,7 +206,7 @@ def send_work_anniversary_reminders():
 
 	message = _("A friendly reminder of an important date for our team.")
 	message += "<br>"
-	message += _("Everyone, let’s congratulate them on their work anniversary!")
+	message += _("Everyone, letâ€™s congratulate them on their work anniversary!")
 
 	for company, anniversary_persons in employees_joined_today.items():
 		employee_emails = get_all_employee_emails(company)
@@ -232,7 +229,7 @@ def get_work_anniversary_reminder_text(anniversary_persons: list) -> str:
 	if len(anniversary_persons) == 1:
 		anniversary_person = anniversary_persons[0]["name"]
 		completed_years = getdate().year - anniversary_persons[0]["date_of_joining"].year
-		return _("Today {0} completed {1} {2} at our Company! 🎉").format(
+		return _("Today {0} completed {1} {2} at our Company! ðŸŽ‰").format(
 			_(anniversary_person), completed_years, get_year_label(completed_years)
 		)
 
@@ -252,7 +249,7 @@ def get_work_anniversary_reminder_text(anniversary_persons: list) -> str:
 
 	# converts ["Jim", "Rim", "Dim"] to Jim, Rim & Dim
 	anniversary_person = comma_sep(person_names_with_years, _("{0} & {1}"), False)
-	return _("Today {0} at our Company! 🎉").format(_(anniversary_person))
+	return _("Today {0} at our Company! ðŸŽ‰").format(_(anniversary_person))
 
 
 def get_year_label(years: int) -> str:

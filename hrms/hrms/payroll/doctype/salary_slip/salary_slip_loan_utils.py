@@ -1,7 +1,4 @@
-# Copyright (c) 2023, Frappe Technologies Pvt. Ltd. and Contributors
-# License: GNU General Public License v3. See license.txt
-
-from typing import TYPE_CHECKING, Any
+﻿from typing import TYPE_CHECKING, Any
 
 import frappe
 from frappe import _

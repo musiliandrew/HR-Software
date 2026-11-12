@@ -1,7 +1,4 @@
-# Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
-# License: GNU General Public License v3. See license.txt
-
-import frappe
+﻿import frappe
 from frappe import _
 from frappe.model.document import Document
 from frappe.query_builder.functions import Avg

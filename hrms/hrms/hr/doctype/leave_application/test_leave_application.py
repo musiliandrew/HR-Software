@@ -1,7 +1,4 @@
-# Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
-# License: GNU General Public License v3. See license.txt
-
-import frappe
+﻿import frappe
 from frappe.permissions import add_user_permission, clear_user_permissions_for_doctype
 from frappe.utils import (
 	add_days,

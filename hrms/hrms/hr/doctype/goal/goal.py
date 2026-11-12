@@ -1,5 +1,4 @@
-# Copyright (c) 2022, Frappe Technologies Pvt. Ltd. and contributors
-# For license information, please see license.txt
+﻿# For license information, please see license.txt
 
 from pypika import CustomFunction
 

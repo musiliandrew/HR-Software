@@ -1,5 +1,4 @@
-# Copyright (c) 2019, Frappe and Contributors
-# License: GNU General Public License v3. See license.txt
+﻿# Copyright (c) 2019, Frappe and Contributors
 
 import frappe
 

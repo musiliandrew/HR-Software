@@ -1,7 +1,4 @@
-# Copyright (c) 2022, Frappe Technologies Pvt. Ltd. and Contributors
-# License: GNU General Public License v3. See license.txt
-
-from frappe import _
+﻿from frappe import _
 
 
 def get_dashboard_for_employee(data):

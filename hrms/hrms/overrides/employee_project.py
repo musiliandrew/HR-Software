@@ -1,7 +1,4 @@
-# Copyright (c) 2022, Frappe Technologies Pvt. Ltd. and Contributors
-# License: GNU General Public License v3. See license.txt
-
-import frappe
+﻿import frappe
 from frappe.query_builder.functions import Coalesce, Max, Min, NullIf, Sum
 from frappe.utils import flt
 

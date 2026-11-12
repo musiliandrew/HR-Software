@@ -1,5 +1,4 @@
-# Copyright (c) 2025, Frappe Technologies Pvt. Ltd. and Contributors
-# See license.txt
+﻿# See license.txt
 import calendar
 from unittest.mock import patch
 

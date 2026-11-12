@@ -1,7 +1,4 @@
-# Copyright (c) 2026, Frappe Technologies Pvt. Ltd. and Contributors
-# License: GNU General Public License v3. See license.txt
-
-import frappe
+﻿import frappe
 from frappe.utils import add_months, get_first_day, get_last_day, getdate
 
 from erpnext.setup.doctype.employee.test_employee import make_employee

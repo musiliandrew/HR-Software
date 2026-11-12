@@ -1,8 +1,4 @@
-# Copyright (c) 2021, Frappe Technologies Pvt. Ltd. and Contributors
-# License: GNU General Public License v3. See license.txt
-
-
-from unittest.mock import patch
+﻿from unittest.mock import patch
 
 import frappe
 from frappe.permissions import add_user_permission

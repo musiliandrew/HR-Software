@@ -1,8 +1,4 @@
-# Copyright (c) 2018, Frappe Technologies Pvt. Ltd. and Contributors
-# License: GNU General Public License v3. See license.txt
-
-
-import frappe
+﻿import frappe
 from frappe.utils import getdate
 
 from erpnext.accounts.utils import get_fiscal_year

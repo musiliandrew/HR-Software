@@ -1,8 +1,4 @@
-# Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
-# License: GNU General Public License v3. See license.txt
-
-
-import frappe
+﻿import frappe
 from frappe import _
 from frappe.query_builder import Criterion
 from frappe.query_builder.functions import Extract

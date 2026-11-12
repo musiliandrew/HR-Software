@@ -1,7 +1,4 @@
-# Copyright (c) 2015, Frappe Technologies Pvt. Ltd. and Contributors
-# License: GNU General Public License v3. See license.txt
-
-from unittest.mock import patch
+﻿from unittest.mock import patch
 
 from dateutil.relativedelta import relativedelta
 

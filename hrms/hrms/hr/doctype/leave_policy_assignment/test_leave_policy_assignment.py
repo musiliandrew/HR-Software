@@ -1,5 +1,4 @@
-# Copyright (c) 2020, Frappe Technologies Pvt. Ltd. and Contributors
-# See license.txt
+﻿# See license.txt
 
 import frappe
 from frappe.utils import add_days, add_months, get_first_day, get_year_ending, get_year_start, getdate
@@ -425,7 +424,7 @@ class TestLeavePolicyAssignment(HRMSTestSuite):
 	def test_half_yearly_earned_leave_schedule_based_on_joining_date_mid_month_first_day(self):
 		"""
 		Employee joins: 27-May-2026 (mid-month), assignment created: 03-Jul-2026
-		Period 1: 27-May-2026 → 26-Nov-2026, Period 2: 27-Nov-2026 → 26-May-2027
+		Period 1: 27-May-2026 â†’ 26-Nov-2026, Period 2: 27-Nov-2026 â†’ 26-May-2027
 		Expected allocation dates: 03-Jul-2026 (period 1 credited on assignment date), 27-Nov-2026
 		"""
 		self.employee.date_of_joining = getdate("2026-05-27")
@@ -478,7 +477,7 @@ class TestLeavePolicyAssignment(HRMSTestSuite):
 	def test_half_yearly_earned_leave_schedule_based_on_joining_date_mid_month_last_day(self):
 		"""
 		Employee joins: 27-May-2026 (mid-month), assignment created: 03-Jul-2026
-		Period 1: 27-May-2026 → 26-Nov-2026, Period 2: 27-Nov-2026 → 26-May-2027
+		Period 1: 27-May-2026 â†’ 26-Nov-2026, Period 2: 27-Nov-2026 â†’ 26-May-2027
 		Expected allocation dates: 26-Nov-2026, 26-May-2027
 		"""
 		self.employee.date_of_joining = getdate("2026-05-27")

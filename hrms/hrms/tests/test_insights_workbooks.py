@@ -1,5 +1,4 @@
-# Copyright (c) 2026, Frappe Technologies and Contributors
-# License: MIT. See LICENSE
+﻿# License: MIT. See LICENSE
 
 import glob
 import json

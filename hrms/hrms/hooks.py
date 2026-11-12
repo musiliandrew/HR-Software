@@ -1,9 +1,8 @@
 app_name = "hrms"
-app_title = "Frappe HR"
-app_publisher = "Frappe Technologies Pvt. Ltd."
+app_title = "HR Software"
+app_publisher = "HR Software"
 app_description = "Modern HR and Payroll Software"
-app_email = "contact@frappe.io"
-app_license = "GNU General Public License (v3)"
+app_email = "admin@example.com"
 required_apps = ["frappe/erpnext"]
 source_link = "http://github.com/frappe/hrms"
 app_logo_url = "/assets/hrms/images/frappe-hr-logo.svg"

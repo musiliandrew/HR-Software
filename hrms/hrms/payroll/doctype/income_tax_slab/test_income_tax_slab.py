@@ -1,5 +1,4 @@
-# Copyright (c) 2020, Frappe Technologies Pvt. Ltd. and Contributors
-# See license.txt
+﻿# See license.txt
 
 import frappe
 
@@ -38,7 +37,7 @@ class TestIncomeTaxSlab(HRMSTestSuite):
 	# calculate_other_charges
 
 	def test_other_charges_applied_as_flat_rate(self):
-		"""Charges in other_taxes_and_charges are a flat percentage — no marginal relief logic."""
+		"""Charges in other_taxes_and_charges are a flat percentage â€” no marginal relief logic."""
 		base_tax = calculate_base_tax_from_tax_slabs(1500000, self.slab_with_cess, None, {})
 
 		_, cess = calculate_other_charges(base_tax, 1500000, self.slab_with_cess)
@@ -47,8 +46,8 @@ class TestIncomeTaxSlab(HRMSTestSuite):
 
 	def test_other_charges_no_marginal_relief_at_threshold(self):
 		"""A surcharge row in other_taxes_and_charges at an income where marginal relief
-		would normally apply is still computed as a plain percentage — no relief reduction."""
-		# Income just above 50L — where marginal relief would apply if using surcharge_slabs
+		would normally apply is still computed as a plain percentage â€” no relief reduction."""
+		# Income just above 50L â€” where marginal relief would apply if using surcharge_slabs
 		income = 5100000
 		slab = make_income_tax_slab(
 			SIMPLE_SLABS,
@@ -115,7 +114,7 @@ class TestIncomeTaxSlab(HRMSTestSuite):
 
 	def test_surcharge_then_cess_reflected_in_salary_slip_tds(self):
 		"""Integration: TDS on a salary slip equals (base_tax + 10% surcharge + 4% cess) / 12.
-		Surcharge is applied first, so cess base is base_tax + surcharge — not base_tax alone."""
+		Surcharge is applied first, so cess base is base_tax + surcharge â€” not base_tax alone."""
 		income_tax_slab = frappe.get_doc(
 			{
 				"doctype": "Income Tax Slab",
@@ -160,13 +159,13 @@ class TestIncomeTaxSlab(HRMSTestSuite):
 			employee=employee,
 			payroll_period=payroll_period,
 			company="_Test Company",
-			base=600000,  # ₹7.2 M annual — in 10% surcharge band (min_taxable_income: 50L)
+			base=600000,  # â‚¹7.2 M annual â€” in 10% surcharge band (min_taxable_income: 50L)
 		)
 
 		ssa_name = frappe.db.get_value("Salary Structure Assignment", {"employee": employee, "docstatus": 1})
 		frappe.db.set_value("Salary Structure Assignment", ssa_name, "income_tax_slab", income_tax_slab.name)
 
-		# Post on the first day of the payroll period → remaining_sub_periods = 12
+		# Post on the first day of the payroll period â†’ remaining_sub_periods = 12
 		salary_slip = make_salary_slip(
 			salary_structure.name,
 			employee=employee,

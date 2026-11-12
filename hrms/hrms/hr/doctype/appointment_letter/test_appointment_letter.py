@@ -1,5 +1,4 @@
-# Copyright (c) 2019, Frappe Technologies Pvt. Ltd. and Contributors
-# See license.txt
+﻿# See license.txt
 
 import frappe
 from frappe.utils import fmt_money
