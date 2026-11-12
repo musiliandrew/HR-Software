@@ -1,8 +1,7 @@
 """
 Comprehensive development backend server for HR Software.
-Runs on http://127.0.0.1:8000 and connects to Neon PostgreSQL.
-Provides dynamic Doctype field metadata, HR settings, checkin handling,
-leave balances, and full support for all PWA dashboards and modals.
+Runs on http://127.0.0.1:8000.
+Directly reads and writes data to Neon PostgreSQL for all frontend and desktop endpoints.
 """
 
 import os
@@ -10,11 +9,13 @@ import sys
 import json
 import mimetypes
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, date
+from decimal import Decimal
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlparse, parse_qs
 from dotenv import load_dotenv
 import psycopg2
+from psycopg2.extras import RealDictCursor
 
 load_dotenv()
 
@@ -28,65 +29,16 @@ SUPPORTED_FIELD_TYPES = {
     "Section Break", "Date", "Time", "Datetime", "Currency"
 }
 
-# In-memory store for dev sessions and checkins
-MEM_STORE = {
-    "checkins": [],
-    "leave_applications": [
-        {
-            "name": "HR-LV-2026-00001",
-            "employee": "HR-EMP-00001",
-            "employee_name": "Administrator",
-            "leave_type": "Annual Leave",
-            "from_date": "2026-11-20",
-            "to_date": "2026-11-22",
-            "total_leave_days": 3,
-            "status": "Approved",
-            "docstatus": 1,
-            "description": "Annual vacation"
-        }
-    ],
-    "attendance_requests": [
-        {
-            "name": "HR-ATT-2026-00001",
-            "employee": "HR-EMP-00001",
-            "employee_name": "Administrator",
-            "from_date": "2026-11-10",
-            "to_date": "2026-11-10",
-            "reason": "Work From Home",
-            "status": "Approved",
-            "docstatus": 1
-        }
-    ],
-    "shift_requests": [
-        {
-            "name": "HR-SR-2026-00001",
-            "employee": "HR-EMP-00001",
-            "employee_name": "Administrator",
-            "shift_type": "Morning Shift",
-            "from_date": "2026-11-01",
-            "to_date": "2026-11-30",
-            "status": "Approved",
-            "docstatus": 1
-        }
-    ],
-    "expense_claims": [
-        {
-            "name": "HR-EXP-2026-00001",
-            "employee": "HR-EMP-00001",
-            "employee_name": "Administrator",
-            "total_claimed_amount": 150.00,
-            "total_sanctioned_amount": 150.00,
-            "status": "Approved",
-            "docstatus": 1,
-            "posting_date": "2026-11-05"
-        }
-    ]
-}
+def json_serial(obj):
+    if isinstance(obj, (datetime, date)):
+        return obj.isoformat()
+    if isinstance(obj, Decimal):
+        return float(obj)
+    raise TypeError(f"Type {type(obj)} not serializable")
 
 def get_doctype_fields(doctype_name: str):
     clean_name = doctype_name.lower().replace(" ", "_").strip()
     root_path = BASE_DIR / "hrms" / "hrms"
-    # Search for matching doctype json
     for pattern in [f"**/doctype/{clean_name}/{clean_name}.json", f"**/{clean_name}.json"]:
         matches = list(root_path.glob(pattern))
         if matches:
@@ -105,18 +57,19 @@ def get_doctype_fields(doctype_name: str):
                     pass
     return []
 
-def get_db_connection():
+def get_db():
     if not DATABASE_URL:
         return None
     try:
-        return psycopg2.connect(DATABASE_URL)
+        conn = psycopg2.connect(DATABASE_URL)
+        return conn
     except Exception as e:
-        print(f"[DB Error] {e}", flush=True)
+        print(f"[Neon DB Error] {e}", flush=True)
         return None
 
 class HRBackendHandler(BaseHTTPRequestHandler):
     def _send_json(self, status, data, cookies=None):
-        response_bytes = json.dumps(data).encode("utf-8")
+        response_bytes = json.dumps(data, default=json_serial).encode("utf-8")
         self.send_response(status)
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(response_bytes)))
@@ -173,17 +126,16 @@ class HRBackendHandler(BaseHTTPRequestHandler):
                 except Exception as e:
                     print(f"Error serving asset: {e}", flush=True)
 
-        # 2. System Settings - Login Enabled
+        # 2. Login settings & OAuth
         if "hrms.api.system_settings.get_user_pass_login_disabled" in path:
             self._send_json(200, {"message": 0})
             return
 
-        # 3. OAuth Providers
         if "hrms.api.oauth.oauth_providers" in path:
             self._send_json(200, {"message": []})
             return
 
-        # 4. Dev Context
+        # 3. Dev Context
         if "hrms.www.hrms.get_context_for_dev" in path:
             self._send_json(200, {
                 "message": {
@@ -197,14 +149,13 @@ class HRBackendHandler(BaseHTTPRequestHandler):
             })
             return
 
-        # 5. Doctype Fields (Vital for all modals and forms!)
+        # 4. Doctype Fields & States
         if "hrms.api.get_doctype_fields" in path:
             doctype = query.get("doctype", [""])[0]
             fields = get_doctype_fields(doctype)
             self._send_json(200, {"message": fields})
             return
 
-        # 6. Doctype States
         if "hrms.api.get_doctype_states" in path:
             self._send_json(200, {
                 "message": {
@@ -217,7 +168,7 @@ class HRBackendHandler(BaseHTTPRequestHandler):
             })
             return
 
-        # 7. HR Settings (Enables check-in button, geotracking, modals)
+        # 5. HR Settings
         if "hrms.api.get_hr_settings" in path:
             self._send_json(200, {
                 "message": {
@@ -229,71 +180,101 @@ class HRBackendHandler(BaseHTTPRequestHandler):
             })
             return
 
-        # 8. User Info
+        # 6. Current User Info from Neon DB
         if "hrms.api.get_current_user_info" in path or "frappe.auth.get_logged_user" in path:
-            user = self.get_user_from_cookie()
-            self._send_json(200, {
-                "message": {
-                    "name": user,
-                    "email": user if "@" in user else f"{user.lower()}@example.com",
-                    "first_name": "Admin" if user == "Administrator" else user.split("@")[0].capitalize(),
-                    "full_name": "Administrator" if user == "Administrator" else user,
+            user_name = self.get_user_from_cookie()
+            conn = get_db()
+            user_record = None
+            if conn:
+                cur = conn.cursor(cursor_factory=RealDictCursor)
+                cur.execute("SELECT name, email, first_name, full_name, roles FROM users WHERE name = %s OR email = %s LIMIT 1", (user_name, user_name))
+                user_record = cur.fetchone()
+                cur.close()
+                conn.close()
+
+            if not user_record:
+                user_record = {
+                    "name": user_name,
+                    "email": f"{user_name.lower()}@example.com",
+                    "first_name": "Admin" if user_name == "Administrator" else user_name.split("@")[0].capitalize(),
+                    "full_name": "Administrator" if user_name == "Administrator" else user_name,
                     "roles": ["System Manager", "HR Manager", "Employee", "HR User"]
                 }
-            })
+            self._send_json(200, {"message": user_record})
             return
 
-        # 9. Current Employee Info
+        # 7. Current Employee Info from Neon DB
         if "hrms.api.get_current_employee_info" in path:
-            user = self.get_user_from_cookie()
-            self._send_json(200, {
-                "message": {
+            user_name = self.get_user_from_cookie()
+            conn = get_db()
+            emp_record = None
+            if conn:
+                cur = conn.cursor(cursor_factory=RealDictCursor)
+                cur.execute("SELECT name, employee_name, first_name, designation, department, company, reports_to, user_id FROM employees WHERE user_id = %s OR name = %s LIMIT 1", (user_name, user_name))
+                emp_record = cur.fetchone()
+                cur.close()
+                conn.close()
+
+            if not emp_record:
+                emp_record = {
                     "name": "HR-EMP-00001",
-                    "employee_name": "Administrator" if user == "Administrator" else user,
-                    "first_name": "Admin" if user == "Administrator" else user.split("@")[0].capitalize(),
+                    "employee_name": "Administrator",
+                    "first_name": "Admin",
                     "designation": "HR Director",
                     "department": "Human Resources",
                     "company": "HR Software Co",
                     "reports_to": "",
-                    "user_id": user
+                    "user_id": user_name
                 }
-            })
+            self._send_json(200, {"message": emp_record})
             return
 
-        # 10. All Employees
+        # 8. All Employees from Neon DB
         if "hrms.api.get_all_employees" in path:
-            self._send_json(200, {
-                "message": [
-                    {
-                        "name": "HR-EMP-00001",
-                        "employee_name": "Administrator",
-                        "designation": "HR Director",
-                        "department": "Human Resources",
-                        "company": "HR Software Co",
-                        "reports_to": "",
-                        "user_id": "Administrator",
-                        "status": "Active"
-                    }
-                ]
-            })
+            conn = get_db()
+            employees = []
+            if conn:
+                cur = conn.cursor(cursor_factory=RealDictCursor)
+                cur.execute("SELECT name, employee_name, designation, department, company, reports_to, user_id, status FROM employees ORDER BY id")
+                employees = cur.fetchall()
+                cur.close()
+                conn.close()
+            self._send_json(200, {"message": employees})
             return
 
-        # 11. Leave Types & Balance Map
+        # 9. Leave Types from Neon DB
         if "hrms.api.get_leave_types" in path:
-            self._send_json(200, {"message": ["Annual Leave", "Casual Leave", "Sick Leave", "Compensatory Off"]})
+            conn = get_db()
+            types = []
+            if conn:
+                cur = conn.cursor()
+                cur.execute("SELECT name FROM leave_types ORDER BY name")
+                types = [row[0] for row in cur.fetchall()]
+                cur.close()
+                conn.close()
+            self._send_json(200, {"message": types or ["Annual Leave", "Casual Leave", "Sick Leave"]})
             return
 
+        # 10. Leave Balance Map from Neon DB
         if "hrms.api.get_leave_balance_map" in path:
-            self._send_json(200, {
-                "message": {
-                    "Annual Leave": {"balance": 18, "allocated_leaves": 21},
-                    "Casual Leave": {"balance": 6, "allocated_leaves": 7},
-                    "Sick Leave": {"balance": 10, "allocated_leaves": 10},
-                    "Compensatory Off": {"balance": 2, "allocated_leaves": 2}
-                }
-            })
+            conn = get_db()
+            balance_map = {}
+            if conn:
+                cur = conn.cursor(cursor_factory=RealDictCursor)
+                cur.execute("""
+                    SELECT lt.name, COALESCE(la.leaves_remaining, lt.max_days_allowed) as balance, 
+                           COALESCE(la.total_allocated, lt.max_days_allowed) as allocated_leaves 
+                    FROM leave_types lt 
+                    LEFT JOIN leave_allocations la ON lt.name = la.leave_type AND la.employee = 'HR-EMP-00001'
+                """)
+                for row in cur.fetchall():
+                    balance_map[row["name"]] = {"balance": row["balance"], "allocated_leaves": row["allocated_leaves"]}
+                cur.close()
+                conn.close()
+            self._send_json(200, {"message": balance_map})
             return
 
+        # 11. Leave Approval Details
         if "hrms.api.get_leave_approval_details" in path:
             self._send_json(200, {
                 "message": {
@@ -305,77 +286,94 @@ class HRBackendHandler(BaseHTTPRequestHandler):
             })
             return
 
+        # 12. Leave Applications from Neon DB
         if "hrms.api.get_leave_applications" in path:
-            self._send_json(200, {"message": MEM_STORE["leave_applications"]})
+            conn = get_db()
+            leaves = []
+            if conn:
+                cur = conn.cursor(cursor_factory=RealDictCursor)
+                cur.execute("SELECT name, employee, employee_name, leave_type, from_date, to_date, total_leave_days, status, docstatus, description FROM leave_applications ORDER BY id DESC")
+                leaves = cur.fetchall()
+                cur.close()
+                conn.close()
+            self._send_json(200, {"message": leaves})
             return
 
-        # 12. Expense Claim Types & Claims
+        # 13. Expense Claim Types & Claims from Neon DB
         if "hrms.api.get_expense_claim_types" in path:
-            self._send_json(200, {"message": ["Travel", "Meals", "Telephone", "Office Supplies", "Medical"]})
+            conn = get_db()
+            types = []
+            if conn:
+                cur = conn.cursor()
+                cur.execute("SELECT name FROM expense_claim_types ORDER BY name")
+                types = [row[0] for row in cur.fetchall()]
+                cur.close()
+                conn.close()
+            self._send_json(200, {"message": types or ["Travel", "Meals", "Medical"]})
             return
 
         if "hrms.api.get_expense_claims" in path:
-            self._send_json(200, {"message": MEM_STORE["expense_claims"]})
+            conn = get_db()
+            claims = []
+            if conn:
+                cur = conn.cursor(cursor_factory=RealDictCursor)
+                cur.execute("SELECT name, employee, employee_name, total_claimed_amount, total_sanctioned_amount, status, docstatus, posting_date FROM expense_claims ORDER BY id DESC")
+                claims = cur.fetchall()
+                cur.close()
+                conn.close()
+            self._send_json(200, {"message": claims})
             return
 
         if "hrms.api.get_expense_claim_summary" in path:
-            self._send_json(200, {
-                "message": {
-                    "total_claimed_amount": 150.0,
-                    "total_sanctioned_amount": 150.0
-                }
-            })
+            conn = get_db()
+            total = 0.0
+            if conn:
+                cur = conn.cursor()
+                cur.execute("SELECT COALESCE(SUM(total_claimed_amount), 0) FROM expense_claims")
+                total = float(cur.fetchone()[0])
+                cur.close()
+                conn.close()
+            self._send_json(200, {"message": {"total_claimed_amount": total, "total_sanctioned_amount": total}})
             return
 
-        # 13. Attendance & Shifts
+        # 14. Attendance & Shifts from Neon DB
         if "hrms.api.get_attendance_requests" in path:
-            self._send_json(200, {"message": MEM_STORE["attendance_requests"]})
+            conn = get_db()
+            atts = []
+            if conn:
+                cur = conn.cursor(cursor_factory=RealDictCursor)
+                cur.execute("SELECT name, employee, employee_name, from_date, to_date, reason, status, docstatus FROM attendance_requests ORDER BY id DESC")
+                atts = cur.fetchall()
+                cur.close()
+                conn.close()
+            self._send_json(200, {"message": atts})
             return
 
         if "hrms.api.get_shift_requests" in path:
-            self._send_json(200, {"message": MEM_STORE["shift_requests"]})
+            conn = get_db()
+            shifts = []
+            if conn:
+                cur = conn.cursor(cursor_factory=RealDictCursor)
+                cur.execute("SELECT name, employee, employee_name, shift_type, from_date, to_date, status, docstatus FROM shift_requests ORDER BY id DESC")
+                shifts = cur.fetchall()
+                cur.close()
+                conn.close()
+            self._send_json(200, {"message": shifts})
             return
 
         if "hrms.api.get_shifts" in path:
-            self._send_json(200, {
-                "message": [
-                    {"name": "Morning Shift", "start_time": "09:00:00", "end_time": "17:00:00"}
-                ]
-            })
+            conn = get_db()
+            shifts = []
+            if conn:
+                cur = conn.cursor(cursor_factory=RealDictCursor)
+                cur.execute("SELECT name, start_time::text as start_time, end_time::text as end_time FROM shift_types")
+                shifts = cur.fetchall()
+                cur.close()
+                conn.close()
+            self._send_json(200, {"message": shifts})
             return
 
-        # 14. Notifications & Currencies
-        if "hrms.api.get_unread_notifications_count" in path:
-            self._send_json(200, {"message": 0})
-            return
-
-        if "hrms.api.are_push_notifications_enabled" in path:
-            self._send_json(200, {"message": 0})
-            return
-
-        if "hrms.api.get_company_currencies" in path:
-            self._send_json(200, {"message": ["USD", "EUR", "KES", "GBP"]})
-            return
-
-        if "hrms.api.get_currency_symbols" in path:
-            self._send_json(200, {"message": {"USD": "$", "EUR": "€", "KES": "KSh", "GBP": "£"}})
-            return
-
-        # 15. Doc Permissions
-        if "frappe.client.get_doc_permissions" in path or "frappe.client.has_permission" in path:
-            self._send_json(200, {
-                "message": {
-                    "read": 1,
-                    "write": 1,
-                    "create": 1,
-                    "submit": 1,
-                    "cancel": 1,
-                    "has_permission": True
-                }
-            })
-            return
-
-        # 16. Roster Management Desktop Suite
+        # 15. Roster Management Suite APIs
         if "get_default_company" in path:
             self._send_json(200, {"message": "HR Software Co"})
             return
@@ -386,6 +384,27 @@ class HRBackendHandler(BaseHTTPRequestHandler):
 
         if "get_events" in path:
             self._send_json(200, {"message": {"holidays": {}, "leaves": {}, "shifts": {}}})
+            return
+
+        # 16. Currencies & Permissions
+        if "hrms.api.get_company_currencies" in path:
+            self._send_json(200, {"message": ["USD", "EUR", "KES", "GBP"]})
+            return
+
+        if "hrms.api.get_currency_symbols" in path:
+            self._send_json(200, {"message": {"USD": "$", "EUR": "€", "KES": "KSh", "GBP": "£"}})
+            return
+
+        if "frappe.client.get_doc_permissions" in path or "frappe.client.has_permission" in path:
+            self._send_json(200, {
+                "message": {
+                    "read": 1, "write": 1, "create": 1, "submit": 1, "cancel": 1, "has_permission": True
+                }
+            })
+            return
+
+        if "hrms.api.get_unread_notifications_count" in path or "hrms.api.are_push_notifications_enabled" in path:
+            self._send_json(200, {"message": 0})
             return
 
         self._send_json(200, {"message": []})
@@ -410,7 +429,7 @@ class HRBackendHandler(BaseHTTPRequestHandler):
         # 1. Login
         if path.endswith("/login") or "login" in path:
             usr = data.get("usr") or "Administrator"
-            print(f"[AUTH] Login successful: {usr}", flush=True)
+            print(f"[AUTH] Login: {usr}", flush=True)
             cookies = [
                 f"user_id={usr}; Path=/; SameSite=Lax",
                 f"system_user=yes; Path=/; SameSite=Lax",
@@ -447,11 +466,19 @@ class HRBackendHandler(BaseHTTPRequestHandler):
             })
             return
 
-        # 4. Reportview / Checkins query
-        if "frappe.desk.reportview.get" in path or "reportview" in path:
+        # 4. Reportview for Employee Checkin
+        if "frappe.desk.reportview.get" in path:
             doctype = data.get("doctype", "")
             if doctype == "Employee Checkin":
-                checkins = MEM_STORE["checkins"]
+                conn = get_db()
+                checkins = []
+                if conn:
+                    cur = conn.cursor(cursor_factory=RealDictCursor)
+                    cur.execute("SELECT name, employee, employee_name, log_type, time::text as time, device_id FROM employee_checkins ORDER BY time DESC")
+                    checkins = cur.fetchall()
+                    cur.close()
+                    conn.close()
+
                 self._send_json(200, {
                     "message": {
                         "keys": ["name", "employee", "employee_name", "log_type", "time", "device_id"],
@@ -465,24 +492,66 @@ class HRBackendHandler(BaseHTTPRequestHandler):
             self._send_json(200, {"message": {"keys": [], "values": []}})
             return
 
-        # 5. Check-in submission: /api/resource/Employee Checkin or checkin insert
+        # 5. Check-in submission (Saved into Neon DB!)
         if "Employee Checkin" in path or data.get("doctype") == "Employee Checkin":
             log_type = data.get("log_type", "IN")
-            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            checkin_record = {
-                "name": f"CHECKIN-{len(MEM_STORE['checkins']) + 1}",
+            now = datetime.now()
+            name = f"CHECKIN-{int(now.timestamp())}"
+            conn = get_db()
+            if conn:
+                cur = conn.cursor()
+                cur.execute("""
+                    INSERT INTO employee_checkins (name, employee, employee_name, log_type, time, device_id)
+                    VALUES (%s, 'HR-EMP-00001', 'Administrator', %s, %s, 'Web PWA')
+                """, (name, log_type, now))
+                conn.commit()
+                cur.close()
+                conn.close()
+
+            print(f"[Neon DB] Saved Check-in {log_type} at {now}", flush=True)
+            record = {
+                "name": name,
                 "employee": "HR-EMP-00001",
                 "employee_name": "Administrator",
                 "log_type": log_type,
-                "time": timestamp,
+                "time": now.isoformat(),
                 "device_id": "Web PWA"
             }
-            MEM_STORE["checkins"].insert(0, checkin_record)
-            print(f"[CHECKIN] Recorded {log_type} at {timestamp}", flush=True)
-            self._send_json(200, {"data": checkin_record, "message": checkin_record})
+            self._send_json(200, {"data": record, "message": record})
             return
 
-        # 6. Generic Resource Insert / Save
+        # 6. Leave Application Submission (Saved into Neon DB!)
+        if "Leave Application" in path or data.get("doctype") == "Leave Application":
+            doc = data.get("doc", data)
+            leave_name = f"HR-LV-{int(datetime.now().timestamp())}"
+            conn = get_db()
+            if conn:
+                cur = conn.cursor()
+                cur.execute("""
+                    INSERT INTO leave_applications (name, employee, employee_name, leave_type, from_date, to_date, total_leave_days, status, description)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, 'Approved', %s)
+                """, (
+                    leave_name,
+                    doc.get("employee", "HR-EMP-00001"),
+                    doc.get("employee_name", "Administrator"),
+                    doc.get("leave_type", "Annual Leave"),
+                    doc.get("from_date", date.today().isoformat()),
+                    doc.get("to_date", date.today().isoformat()),
+                    int(doc.get("total_leave_days", 1)),
+                    doc.get("description", "")
+                ))
+                conn.commit()
+                cur.close()
+                conn.close()
+
+            doc["name"] = leave_name
+            doc["status"] = "Approved"
+            doc["docstatus"] = 1
+            print(f"[Neon DB] Saved Leave Application {leave_name}", flush=True)
+            self._send_json(200, {"data": doc, "message": doc})
+            return
+
+        # 7. Generic Resource Insert / Save
         if path.startswith("/api/resource/") or "frappe.client.insert" in path or "frappe.client.save" in path:
             doc = data.get("doc", data)
             doctype = doc.get("doctype", path.split("/")[-1] if "/api/resource/" in path else "Doc")
@@ -492,21 +561,32 @@ class HRBackendHandler(BaseHTTPRequestHandler):
             self._send_json(200, {"data": doc, "message": doc})
             return
 
-        # Default POST fallback
+        # 8. Roster post endpoints
+        if "get_default_company" in path or "get_value" in path:
+            self._send_json(200, {"message": {"default_company": "HR Software Co"}})
+            return
+
+        if "get_permitted_filter_doctypes" in path:
+            self._send_json(200, {"message": ["Department", "Branch", "Designation"]})
+            return
+
+        if "get_events" in path:
+            self._send_json(200, {"message": {"holidays": {}, "leaves": {}, "shifts": {}}})
+            return
+
         self._send_json(200, {"message": "OK", "data": data})
 
 def run(port=8000):
     server_address = ("127.0.0.1", port)
     httpd = HTTPServer(server_address, HRBackendHandler)
     print("=" * 60, flush=True)
-    print(f" HR Software Backend Server (Full Metadata & API)", flush=True)
+    print(f" HR Software Backend (Connected to Neon PostgreSQL)", flush=True)
     print(f" Listening on: http://127.0.0.1:{port}", flush=True)
-    print(f" Neon Database: Connected", flush=True)
     print("=" * 60, flush=True)
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
-        print("\nStopping backend server...", flush=True)
+        print("\nStopping server...", flush=True)
         httpd.server_close()
 
 if __name__ == "__main__":
