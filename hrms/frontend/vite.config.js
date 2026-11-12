@@ -112,8 +112,9 @@ function getProxyOptions() {
 
 function getCommonSiteConfig() {
 	let currentDir = path.resolve(".")
+	let parentDir = path.resolve(currentDir, "..")
 	// traverse up till we find frappe-bench with sites directory
-	while (currentDir !== "/") {
+	while (currentDir !== parentDir) {
 		if (
 			fs.existsSync(path.join(currentDir, "sites")) &&
 			fs.existsSync(path.join(currentDir, "apps"))
@@ -124,7 +125,8 @@ function getCommonSiteConfig() {
 			}
 			return null
 		}
-		currentDir = path.resolve(currentDir, "..")
+		currentDir = parentDir
+		parentDir = path.resolve(currentDir, "..")
 	}
 	return null
 }
