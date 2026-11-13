@@ -734,14 +734,16 @@ nav a:hover {
 }
 
 .hero {
-	padding: 72px 0 0;
+	padding: 64px 0 0;
 	border-bottom: 1px solid var(--line);
+	overflow: hidden;
 }
 .hero .w {
 	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: 40px;
+	grid-template-columns: 1fr 1.25fr;
+	gap: 24px;
 	align-items: end;
+	max-width: 1180px;
 }
 .hero p {
 	color: var(--mute);
@@ -769,20 +771,22 @@ nav a:hover {
 .hero-graphic {
 	justify-self: end;
 	width: 100%;
-	max-width: 540px;
+	max-width: 680px;
 	display: flex;
 	align-items: flex-end;
 	justify-content: center;
 	align-self: end;
+	margin-bottom: -1px;
 }
 .hero-img {
 	width: 100%;
 	height: auto;
-	max-height: 440px;
+	max-height: 560px;
 	object-fit: contain;
 	object-position: bottom;
 	display: block;
-	border-radius: 16px 16px 0 0;
+	transform: scale(1.04);
+	transform-origin: bottom center;
 }
 
 .trust {
