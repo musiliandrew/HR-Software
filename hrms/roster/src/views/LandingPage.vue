@@ -1,993 +1,486 @@
 <template>
-	<div class="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans selection:bg-indigo-600 selection:text-white">
-		<!-- Top Navigation Bar -->
-		<header class="sticky top-0 z-40 backdrop-blur-md bg-white/90 border-b border-slate-200 shadow-sm transition-all">
-			<div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-				<!-- Brand Logo -->
-				<div class="flex items-center space-x-3 cursor-pointer" @click="scrollToTop">
-					<div class="h-11 w-11 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-violet-500 p-0.5 shadow-md shadow-indigo-500/20 flex items-center justify-center">
-						<div class="h-full w-full bg-white rounded-[10px] flex items-center justify-center">
-							<span class="text-2xl font-black bg-gradient-to-tr from-indigo-600 to-violet-600 bg-clip-text text-transparent">E</span>
-						</div>
-					</div>
-					<div class="flex flex-col">
-						<div class="flex items-center space-x-2">
-							<span class="text-2xl font-extrabold tracking-tight text-slate-900">Eliza</span>
-							<span class="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-full">SaaS</span>
-						</div>
-						<span class="text-[11px] font-medium text-slate-500 tracking-wide">Modern HR & Payroll</span>
-					</div>
-				</div>
+	<div class="eliza-root">
+		<!-- Header -->
+		<header>
+			<div class="w">
+				<router-link class="logo" to="/">
+					<i></i>eliza
+				</router-link>
 
-				<!-- Desktop Nav Links -->
-				<nav class="hidden md:flex items-center space-x-8 text-sm font-semibold text-slate-600">
-					<a href="#features" class="hover:text-indigo-600 transition">Features</a>
-					<a href="#preview" class="hover:text-indigo-600 transition">Platform</a>
-					<a href="#pricing" class="hover:text-indigo-600 transition">Pricing</a>
-					<a href="#architecture" class="hover:text-indigo-600 transition">Architecture</a>
-					<a href="#faq" class="hover:text-indigo-600 transition">FAQ</a>
+				<nav>
+					<a href="#products">Platform</a>
+					<a href="#solutions">Solutions</a>
+					<a href="#stories">Customers</a>
+					<a href="#support">Support</a>
+					<a href="#insights">Resources</a>
 				</nav>
 
-				<!-- Quick Access & CTA -->
-				<div class="flex items-center space-x-3">
-					<a
-						href="http://127.0.0.1:8080"
-						target="_blank"
-						class="hidden sm:inline-flex items-center px-3.5 py-2 text-xs font-semibold rounded-lg text-slate-700 bg-slate-100 hover:bg-slate-200/80 border border-slate-300 transition"
-						title="Open Employee Mobile Self-Service PWA"
-					>
-						<svg class="w-4 h-4 mr-1.5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-						</svg>
-						Employee PWA
-					</a>
-
-					<router-link
-						to="/desk/hr-setup"
-						class="hidden sm:inline-flex items-center px-3.5 py-2 text-xs font-semibold rounded-lg text-slate-700 bg-slate-100 hover:bg-slate-200/80 border border-slate-300 transition"
-					>
-						<svg class="w-4 h-4 mr-1.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
-						</svg>
-						HR Desk
-					</router-link>
-
-					<button
-						@click="openModal('Growth')"
-						class="inline-flex items-center px-4 py-2 text-xs font-bold rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 shadow-md shadow-indigo-600/20 transition transform hover:-translate-y-0.5"
-					>
-						Start Free Trial
-					</button>
+				<div class="hr">
+					<router-link to="/desk/hr-setup" class="o">HR Desk</router-link>
+					<a href="http://127.0.0.1:8080" target="_blank" class="o">Employee PWA</a>
+					<button class="btn" @click="openModal('Growth')">Get a demo</button>
 				</div>
 			</div>
 		</header>
 
-		<!-- Hero Section -->
-		<section class="relative pt-16 pb-20 overflow-hidden bg-gradient-to-b from-white via-indigo-50/30 to-slate-50 border-b border-slate-200">
-			<!-- Subtle Background Radial Glow -->
-			<div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-indigo-200/40 rounded-full blur-[100px] pointer-events-none"></div>
-
-			<div class="max-w-7xl mx-auto px-6 relative z-10 text-center">
-				<!-- Announcement Pill -->
-				<div class="inline-flex items-center space-x-2 px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-bold mb-8 shadow-sm">
-					<span class="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-					<span>Eliza 2.0 Live</span>
-					<span class="text-slate-400">•</span>
-					<span>Autonomous Multi-Tenant HR & Payroll</span>
+		<!-- Hero -->
+		<div class="hero">
+			<div class="w">
+				<div style="padding-bottom: 64px">
+					<small style="color: var(--mute); font-size: 12px">The connected construction & workforce platform</small>
+					<h1 style="margin-top: 14px">Build with<br />confidence.</h1>
+					<p>How modern contractors and companies manage payroll, HR, expenses, and field operations in one place.</p>
+					
+					<form class="form" @submit.prevent="submitHeroEmail">
+						<input
+							type="email"
+							v-model="heroEmail"
+							placeholder="Enter your work email"
+							aria-label="Work email"
+							required
+						/>
+						<button class="btn" type="submit">Get a demo</button>
+					</form>
 				</div>
 
-				<!-- Main Headline -->
-				<h1 class="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-slate-950 max-w-5xl mx-auto leading-[1.14]">
-					Modern HR, Rostering & Payroll.<br />
-					<span class="bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 bg-clip-text text-transparent">
-						Engineered for Ambitious Teams.
-					</span>
-				</h1>
+				<div class="phone">
+					<small>Welcome back to Eliza</small>
+					<b>Crew overview</b>
+					<div class="kp">
+						<div>Hours today<strong>312</strong></div>
+						<div>On site<strong>4</strong></div>
+						<div>Crews<strong>253</strong></div>
+					</div>
+					<div class="bars">
+						<span style="height: 40%"></span>
+						<span style="height: 75%"></span>
+						<span style="height: 55%"></span>
+						<span style="height: 90%"></span>
+						<span style="height: 35%"></span>
+						<span style="height: 65%"></span>
+					</div>
+				</div>
+			</div>
 
-				<!-- Subtitle -->
-				<p class="mt-6 text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
-					Say goodbye to fragmented spreadsheets and legacy portals. Eliza empowers company leads to automate employee onboarding, shift schedules, leave requests, and payroll in one unified workspace.
-					<strong class="text-slate-900 font-bold block mt-2"> The employer pays one predictable subscription — 100% free for all employees.</strong>
-				</p>
+			<div class="w trust">
+				<small>Trusted by 700+ contractors & growing enterprises</small>
+				<div class="logos">
+					<div>KNIGHT</div>
+					<div>HARBOR</div>
+					<div>WD</div>
+					<div>GREEN</div>
+					<div>ECC</div>
+					<div>KL</div>
+					<div>FH</div>
+					<div>m</div>
+					<div>TRUEBECK</div>
+					<div>MECO</div>
+				</div>
+			</div>
+		</div>
 
-				<!-- CTA Buttons -->
-				<div class="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-					<button
-						@click="openModal('Growth')"
-						class="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 text-sm font-bold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-600/25 transition transform hover:-translate-y-0.5"
-					>
-						<span>Start 14-Day Free Trial</span>
-						<svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-						</svg>
-					</button>
+		<!-- Products Section -->
+		<section id="products">
+			<div class="w">
+				<h2>Connect your people,<br />projects, and payments.</h2>
+				
+				<div class="tabs" role="tablist">
+					<a href="#hcm" :class="{ active: activeTab === 'hcm' }" @click.prevent="scrollToTab('hcm')">HCM</a>
+					<a href="#field" :class="{ active: activeTab === 'field' }" @click.prevent="scrollToTab('field')">Field Operations</a>
+					<a href="#expense" :class="{ active: activeTab === 'expense' }" @click.prevent="scrollToTab('expense')">Expense Management</a>
+				</div>
 
-					<router-link
-						to="/desk/hr-setup"
-						class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 text-sm font-bold rounded-xl text-slate-800 bg-white hover:bg-slate-100 border border-slate-300 shadow-sm transition"
-					>
-						<svg class="mr-2 w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-						</svg>
-						Explore HR Workspace
-					</router-link>
+				<!-- Feat 1: HCM -->
+				<div class="feat" id="hcm">
+					<div>
+						<span class="tag">HCM</span>
+						<h3>Prioritize your people over paperwork.</h3>
+						<p>Build a stronger workforce with less work. Eliza streamlines hiring, paying, developing and rewarding your team — so you can attract and retain top talent.</p>
+						<router-link to="/desk/hr-setup" style="font-size: 14px; font-weight: 500">Explore HR Workspace &rarr;</router-link>
+						<div class="tags">
+							<span>HRIS</span>
+							<span>Payroll</span>
+							<span>Recruiting</span>
+							<span>Benefits</span>
+						</div>
+					</div>
+					<div class="pn m">
+						<div class="card">
+							<h4>Finalize your offer</h4>
+							<div class="row">
+								<span>Role</span>
+								<span>Journeyman Electrician</span>
+							</div>
+							<div class="row">
+								<span>Start date</span>
+								<span>Tue, Apr 1</span>
+							</div>
+							<div class="row">
+								<span>Pay rate</span>
+								<span>$ 78.00 / hr</span>
+							</div>
+						</div>
+					</div>
+				</div>
 
-					<a
-						href="http://127.0.0.1:8080"
-						target="_blank"
-						class="w-full sm:w-auto inline-flex items-center justify-center px-6 py-3.5 text-sm font-bold rounded-xl text-slate-800 bg-white hover:bg-slate-100 border border-slate-300 shadow-sm transition"
-					>
-						<svg class="mr-2 w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-						</svg>
-						Launch Employee Mobile PWA
+				<!-- Feat 2: Field Operations -->
+				<div class="feat" id="field">
+					<div>
+						<span class="tag">Field Operations</span>
+						<h3>Precision field reporting, made easy.</h3>
+						<p>One system for time tracking, equipment, photos, and schedules. Ensure your field team spends less time juggling apps and more time focused on the job.</p>
+						<router-link to="/roster" style="font-size: 14px; font-weight: 500">View Shift Roster &rarr;</router-link>
+						<div class="tags">
+							<span>Time Tracking</span>
+							<span>Scheduling</span>
+							<span>Production</span>
+						</div>
+					</div>
+					<div class="pn t">
+						<div class="card">
+							<h4>Active timesheet</h4>
+							<div class="timer">4:24:42</div>
+							<div class="row">
+								<span>Job</span>
+								<span>SF-27 Hotel Building</span>
+							</div>
+							<div class="row">
+								<span>Activity</span>
+								<span>Pipe Fitting</span>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Feat 3: Expense Management -->
+				<div class="feat" id="expense">
+					<div>
+						<span class="tag">Expense Management</span>
+						<h3>Expense management for contractors.</h3>
+						<p>Centralize expenses, per diems, and reimbursements alongside payroll and time tracking for seamless, stress-free job costing.</p>
+						<a href="http://127.0.0.1:8080" target="_blank" style="font-size: 14px; font-weight: 500">Test on Mobile PWA &rarr;</a>
+						<div class="tags">
+							<span>Reimbursements</span>
+							<span>Per Diems</span>
+							<span>Corporate Cards</span>
+						</div>
+					</div>
+					<div class="pn g">
+						<div class="card">
+							<h4>Reimbursements</h4>
+							<div class="row">
+								<span>Texaco</span>
+								<span>$78.28 <span class="pill">Approved</span></span>
+							</div>
+							<div class="row">
+								<span>Tolls</span>
+								<span>$57.00 <span class="pill">Approved</span></span>
+							</div>
+							<div class="row">
+								<span>Equipment Supply</span>
+								<span>$109.47 <span class="pill" style="background: #fdf3e7; color: #8a6a43">Pending</span></span>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="cta" id="demo">
+					<h4>Workforce management without the manual work.</h4>
+					<button class="btn" @click="openModal('Growth')">Get a demo</button>
+				</div>
+			</div>
+		</section>
+
+		<!-- Customer Stories -->
+		<section id="stories">
+			<div class="w c">
+				<h2>We've helped <em>700+</em> companies grow and manage their teams.</h2>
+				<button class="btn o" style="margin-top: 8px" @click="openModal('Enterprise')">View all stories</button>
+
+				<div class="story">
+					<div>
+						<div>
+							<span class="meta">General Contractor</span>
+							<h3 style="font-size: 32px; margin-top: 12px">How One of Florida's Biggest GCs Modernized Their Back Office with Eliza</h3>
+						</div>
+						<div>
+							<a href="#" style="font-weight: 500; font-size: 14px" @click.prevent="openModal('Growth')">Read case study &rarr;</a>
+							<div class="meta" style="margin-top: 20px">
+								<span>200 employees</span>
+								<span>Sage Intacct</span>
+								<span>Procore</span>
+								<span>Florida · North Carolina · Texas</span>
+							</div>
+						</div>
+					</div>
+					<div class="ph">
+						<div class="play" aria-label="Play video" @click="openModal('Growth')">▶</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Platform Grid (Solutions) -->
+		<section id="solutions" style="padding-top: 0">
+			<div class="w">
+				<h2>One platform, every piece in place.</h2>
+				<div class="grid2">
+					<div>
+						<h3 style="font-size: 20px">Connected systems</h3>
+						<p>Eliminate data silos and double entry by connecting HR, time tracking, project management, and accounting in one place.</p>
+						<a href="#" @click.prevent="openModal('Growth')">Bring your systems together &rarr;</a>
+					</div>
+					<div>
+						<h3 style="font-size: 20px">Compliance</h3>
+						<p>Stay compliant without the headaches by automating certified payroll reporting, union fringes, and complex multi-state requirements.</p>
+						<a href="#" @click.prevent="openModal('Enterprise')">Make compliance a breeze &rarr;</a>
+					</div>
+					<div>
+						<h3 style="font-size: 20px">Job costing</h3>
+						<p>Make better decisions by tracking equipment, materials, and fully-burdened labor costs to the cent — in real time.</p>
+						<a href="#" @click.prevent="openModal('Growth')">Cost smarter &rarr;</a>
+					</div>
+					<div style="background: var(--bg); display: flex; flex-direction: column; justify-content: center; align-items: flex-start;">
+						<h3 style="font-size: 20px">Multi-Tenant PostgreSQL</h3>
+						<p>Built with enterprise database partition isolation on Neon Cloud for sub-second query execution.</p>
+						<router-link to="/desk/hr-setup" style="font-weight: 500">Launch Management Desk &rarr;</router-link>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Integrations -->
+		<section style="padding-top: 0">
+			<div class="w">
+				<div class="int">
+					<small style="text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600">Integrations</small>
+					<h3>Eliza works with the tools you use.</h3>
+					<p>Connect your workflows with integrations that actually work. Use our off-the-shelf integrations, or build a custom integration with our REST API.</p>
+					<button class="btn" @click="openModal('Enterprise')">Explore all integrations</button>
+					<div class="row2">
+						<span>Acumatica</span>
+						<span>Sage</span>
+						<span>PREMIER</span>
+						<span>ServiceTitan</span>
+						<span>NetSuite</span>
+						<span>Build</span>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Support -->
+		<section id="support" style="padding-top: 0">
+			<div class="w sup">
+				<small style="color: var(--mute); font-weight: 500; font-size: 13px">Support</small>
+				<div>
+					<h2 style="font-size: 32px">Get answers in minutes, not weeks.</h2>
+					<div class="cards">
+						<div>
+							<h3 style="font-size: 18px">US-based support</h3>
+							<p>Our US-based R&amp;D and support team provides hands-on onboarding and training, as well as fast responses via phone, email or in-app chat.</p>
+							<div class="map"></div>
+						</div>
+						<div>
+							<h3 style="font-size: 18px">White glove service</h3>
+							<p>Eliza provides high-touch, premium implementation support to set up your team, configure your shifts, and ensure you're positioned for success.</p>
+							<div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--line)">
+								<strong style="display: block; font-size: 14px; margin-bottom: 6px">Employer-First B2B Model</strong>
+								<p style="margin: 0; font-size: 13px">The company pays the predictable subscription. Free self-service access for all invited employees.</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Insights and Events -->
+		<section id="insights" style="padding-top: 0">
+			<div class="w">
+				<h3 style="font-size: 28px; display: flex; justify-content: space-between; align-items: baseline">
+					Insights and events
+					<a href="#" style="font-size: 14px; color: var(--mute)">View all &rarr;</a>
+				</h3>
+				<div class="ins">
+					<a href="#" @click.prevent="openModal('Growth')">
+						<div class="im"></div>
+						<h4>Three Signs It's Time for a New Construction Payroll Solution</h4>
+						<span>Blog</span><span>Payroll</span>
+					</a>
+					<a href="#" @click.prevent="openModal('Growth')">
+						<div class="im"></div>
+						<h4>Why Generic Payroll Solutions Don't Cut It for Contractors</h4>
+						<span>Blog</span><span>Compliance</span>
+					</a>
+					<a href="#" @click.prevent="openModal('Enterprise')">
+						<div class="im"></div>
+						<h4>Avoid Costly Work Authorization with E-Verify in Eliza</h4>
+						<span>Events</span><span>Webinar</span>
 					</a>
 				</div>
-
-				<!-- Value Badges -->
-				<div class="mt-12 pt-8 border-t border-slate-200 max-w-4xl mx-auto grid grid-cols-2 sm:grid-cols-4 gap-6 text-slate-700 text-xs font-bold">
-					<div class="flex items-center justify-center space-x-2 bg-white py-2 px-3 rounded-lg border border-slate-200 shadow-sm">
-						<svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-						</svg>
-						<span>PostgreSQL Cloud DB</span>
-					</div>
-					<div class="flex items-center justify-center space-x-2 bg-white py-2 px-3 rounded-lg border border-slate-200 shadow-sm">
-						<svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-						</svg>
-						<span>Instant 60s Onboarding</span>
-					</div>
-					<div class="flex items-center justify-center space-x-2 bg-white py-2 px-3 rounded-lg border border-slate-200 shadow-sm">
-						<svg class="w-4 h-4 text-cyan-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-						</svg>
-						<span>Free Employee Access</span>
-					</div>
-					<div class="flex items-center justify-center space-x-2 bg-white py-2 px-3 rounded-lg border border-slate-200 shadow-sm">
-						<svg class="w-4 h-4 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-						</svg>
-						<span>Multi-Tenant Partitioned</span>
-					</div>
-				</div>
 			</div>
 		</section>
 
-		<!-- Interactive Hero Preview / Live Mockup -->
-		<section id="preview" class="max-w-7xl mx-auto px-6 py-20">
-			<div class="rounded-2xl bg-white border border-slate-200 shadow-2xl p-4 sm:p-6 lg:p-8">
-				<!-- Window Controls Bar -->
-				<div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-slate-200 gap-4">
-					<div class="flex items-center space-x-3">
-						<div class="flex space-x-1.5">
-							<div class="w-3 h-3 rounded-full bg-rose-500"></div>
-							<div class="w-3 h-3 rounded-full bg-amber-500"></div>
-							<div class="w-3 h-3 rounded-full bg-emerald-500"></div>
-						</div>
-						<div class="h-4 w-px bg-slate-200"></div>
-						<span class="text-xs font-mono font-medium text-slate-600">eliza.cloud/workspace • Acme Corporation</span>
-						<span class="px-2.5 py-0.5 text-[10px] font-extrabold rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300">GROWTH TIER</span>
-					</div>
-
-					<!-- Preview Tabs -->
-					<div class="flex items-center space-x-1 bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs">
-						<button
-							v-for="tab in previewTabs"
-							:key="tab.id"
-							@click="activePreviewTab = tab.id"
-							:class="activePreviewTab === tab.id ? 'bg-white text-indigo-700 font-bold shadow-sm' : 'text-slate-600 hover:text-slate-900 font-medium'"
-							class="px-3.5 py-1.5 rounded-lg transition"
-						>
-							{{ tab.name }}
-						</button>
-					</div>
-				</div>
-
-				<!-- Live Preview KPI Row -->
-				<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 my-6">
-					<div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-						<p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Active Employees</p>
-						<p class="text-2xl font-black text-slate-900 mt-1">5 / 50 <span class="text-xs text-indigo-600 font-medium">seats</span></p>
-						<div class="w-full bg-slate-200 h-1.5 rounded-full mt-2 overflow-hidden">
-							<div class="bg-indigo-600 h-full rounded-full" style="width: 10%"></div>
-						</div>
-					</div>
-
-					<div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-						<p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Checked In Today</p>
-						<p class="text-2xl font-black text-emerald-600 mt-1">4 <span class="text-xs text-slate-500 font-medium">(80% on shift)</span></p>
-						<p class="text-[11px] text-emerald-700 font-semibold mt-2">● Real-time geo-verified</p>
-					</div>
-
-					<div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-						<p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Pending Leaves</p>
-						<p class="text-2xl font-black text-amber-600 mt-1">2 <span class="text-xs text-slate-500 font-medium">awaiting review</span></p>
-						<p class="text-[11px] text-slate-600 mt-2">Annual & Sick leave</p>
-					</div>
-
-					<div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
-						<p class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Monthly Payroll</p>
-						<p class="text-2xl font-black text-indigo-600 mt-1">$23,500 <span class="text-xs text-slate-500 font-medium">processed</span></p>
-						<p class="text-[11px] text-slate-600 mt-2">Slips distributed</p>
-					</div>
-				</div>
-
-				<!-- Tab Content Showcase -->
-				<div class="bg-slate-50/80 rounded-xl border border-slate-200 p-6 min-h-[300px]">
-					<!-- Tab 1: Shift Rostering -->
-					<div v-if="activePreviewTab === 'shifts'" class="space-y-4">
-						<div class="flex items-center justify-between">
-							<h4 class="text-sm font-bold text-slate-900">Weekly Shift Coverage & Allocation</h4>
-							<router-link to="/roster" class="text-xs text-indigo-600 hover:text-indigo-700 font-bold flex items-center">
-								Open Full Calendar &rarr;
-							</router-link>
-						</div>
-						<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-							<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-								<div class="flex items-center justify-between">
-									<span class="text-xs font-bold text-indigo-700 uppercase bg-indigo-50 px-2 py-0.5 rounded">Morning Shift</span>
-									<span class="text-[11px] font-medium text-slate-500">08:00 - 16:30</span>
-								</div>
-								<p class="text-sm font-bold text-slate-900 mt-3">Engineering & Product</p>
-								<div class="mt-3 flex items-center space-x-2">
-									<span class="h-6 w-6 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px] font-bold">JD</span>
-									<span class="h-6 w-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-[10px] font-bold">AS</span>
-									<span class="text-xs text-slate-600 font-medium">+2 more</span>
-								</div>
-							</div>
-							<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-								<div class="flex items-center justify-between">
-									<span class="text-xs font-bold text-emerald-800 uppercase bg-emerald-50 px-2 py-0.5 rounded">General Shift</span>
-									<span class="text-[11px] font-medium text-slate-500">09:00 - 18:00</span>
-								</div>
-								<p class="text-sm font-bold text-slate-900 mt-3">Operations & HR Lead</p>
-								<div class="mt-3 flex items-center space-x-2">
-									<span class="h-6 w-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] font-bold">AD</span>
-									<span class="text-xs text-slate-600 font-medium">Administrator</span>
-								</div>
-							</div>
-							<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-								<div class="flex items-center justify-between">
-									<span class="text-xs font-bold text-amber-800 uppercase bg-amber-50 px-2 py-0.5 rounded">Evening Support</span>
-									<span class="text-[11px] font-medium text-slate-500">16:00 - 00:00</span>
-								</div>
-								<p class="text-sm font-bold text-slate-900 mt-3">Customer Success</p>
-								<div class="mt-3 flex items-center space-x-2">
-									<span class="h-6 w-6 rounded-full bg-purple-600 text-white flex items-center justify-center text-[10px] font-bold">MR</span>
-									<span class="text-xs text-slate-600 font-medium">1 active</span>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<!-- Tab 2: Employee Directory -->
-					<div v-else-if="activePreviewTab === 'employees'" class="space-y-4">
-						<div class="flex items-center justify-between">
-							<h4 class="text-sm font-bold text-slate-900">Live Team Roster (Neon PostgreSQL)</h4>
-							<router-link to="/desk/hr-setup" class="text-xs text-indigo-600 hover:text-indigo-700 font-bold flex items-center">
-								Manage in HR Desk &rarr;
-							</router-link>
-						</div>
-						<div class="overflow-x-auto bg-white rounded-xl border border-slate-200 shadow-sm">
-							<table class="w-full text-left text-xs">
-								<thead>
-									<tr class="text-slate-600 bg-slate-100/80 border-b border-slate-200 font-bold">
-										<th class="py-3 px-4">Employee</th>
-										<th class="py-3 px-4">Department</th>
-										<th class="py-3 px-4">Designation</th>
-										<th class="py-3 px-4">Role</th>
-										<th class="py-3 px-4">Status</th>
-									</tr>
-								</thead>
-								<tbody class="divide-y divide-slate-200 text-slate-700">
-									<tr>
-										<td class="py-3 px-4 font-bold text-slate-900 flex items-center space-x-2.5">
-											<span class="h-6 w-6 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px] font-bold">JD</span>
-											<span>John Doe</span>
-										</td>
-										<td class="py-3 px-4">Engineering</td>
-										<td class="py-3 px-4">Senior Software Engineer</td>
-										<td class="py-3 px-4"><span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-medium">Employee</span></td>
-										<td class="py-3 px-4"><span class="text-emerald-700 font-bold">● Active</span></td>
-									</tr>
-									<tr>
-										<td class="py-3 px-4 font-bold text-slate-900 flex items-center space-x-2.5">
-											<span class="h-6 w-6 rounded-full bg-purple-600 text-white flex items-center justify-center text-[10px] font-bold">JS</span>
-											<span>Jane Smith</span>
-										</td>
-										<td class="py-3 px-4">Human Resources</td>
-										<td class="py-3 px-4">HR Manager</td>
-										<td class="py-3 px-4"><span class="px-2 py-0.5 rounded bg-indigo-100 text-indigo-800 font-bold">HR Lead</span></td>
-										<td class="py-3 px-4"><span class="text-emerald-700 font-bold">● Active</span></td>
-									</tr>
-									<tr>
-										<td class="py-3 px-4 font-bold text-slate-900 flex items-center space-x-2.5">
-											<span class="h-6 w-6 rounded-full bg-cyan-600 text-white flex items-center justify-center text-[10px] font-bold">AS</span>
-											<span>Alice Smith</span>
-										</td>
-										<td class="py-3 px-4">Product Design</td>
-										<td class="py-3 px-4">Lead Product Designer</td>
-										<td class="py-3 px-4"><span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-medium">Employee</span></td>
-										<td class="py-3 px-4"><span class="text-emerald-700 font-bold">● Active</span></td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-					</div>
-
-					<!-- Tab 3: Attendance -->
-					<div v-else-if="activePreviewTab === 'attendance'" class="space-y-4">
-						<div class="flex items-center justify-between">
-							<h4 class="text-sm font-bold text-slate-900">Real-Time Mobile Geofence Check-ins</h4>
-							<a href="http://127.0.0.1:8080" target="_blank" class="text-xs text-indigo-600 hover:text-indigo-700 font-bold flex items-center">
-								Simulate on Mobile PWA &rarr;
-							</a>
-						</div>
-						<div class="space-y-3">
-							<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between text-xs">
-								<div class="flex items-center space-x-3">
-									<span class="p-2 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-200">
-										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-										</svg>
-									</span>
-									<div>
-										<p class="font-bold text-slate-900">John Doe • IN</p>
-										<p class="text-[11px] text-slate-500">HQ Office Geofence (40.7128, -74.0060)</p>
-									</div>
-								</div>
-								<div class="text-right">
-									<p class="font-mono font-bold text-slate-900">08:58 AM</p>
-									<span class="text-[11px] text-emerald-700 font-bold">On Time</span>
-								</div>
-							</div>
-
-							<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center justify-between text-xs">
-								<div class="flex items-center space-x-3">
-									<span class="p-2 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-200">
-										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-										</svg>
-									</span>
-									<div>
-										<p class="font-bold text-slate-900">Alice Smith • IN</p>
-										<p class="text-[11px] text-slate-500">Remote Work (IP Verified)</p>
-									</div>
-								</div>
-								<div class="text-right">
-									<p class="font-mono font-bold text-slate-900">09:02 AM</p>
-									<span class="text-[11px] text-emerald-700 font-bold">On Time</span>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<!-- Tab 4: Payroll -->
-					<div v-else class="space-y-4">
-						<div class="flex items-center justify-between">
-							<h4 class="text-sm font-bold text-slate-900">Automated Payroll Calculation & Salary Slips</h4>
-							<span class="text-xs text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">Cycle: March 2026 (Completed)</span>
-						</div>
-						<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
-							<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-								<div class="flex justify-between items-center text-slate-600">
-									<span>Base Gross Salary</span>
-									<span class="font-bold text-slate-900">$27,500.00</span>
-								</div>
-								<div class="flex justify-between items-center text-slate-600 mt-2">
-									<span>Tax & Benefit Deductions</span>
-									<span class="font-bold text-rose-600">-$4,000.00</span>
-								</div>
-								<div class="h-px bg-slate-200 my-3"></div>
-								<div class="flex justify-between items-center">
-									<span class="font-bold text-slate-900">Net Disbursed</span>
-									<span class="font-black text-emerald-600 text-base">$23,500.00</span>
-								</div>
-							</div>
-							<div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
-								<div>
-									<p class="font-bold text-slate-900">Payslips Ready for Download</p>
-									<p class="text-slate-500 text-[11px] mt-1">Available instantly on employee mobile self-service app.</p>
-								</div>
-								<div class="mt-4 flex space-x-2">
-									<button class="px-3.5 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-[11px] shadow-sm">
-										Download Batch PDF
-									</button>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</section>
-
-		<!-- Features Grid ("Why Eliza") -->
-		<section id="features" class="py-20 bg-white border-t border-slate-200">
-			<div class="max-w-7xl mx-auto px-6">
-				<div class="text-center max-w-3xl mx-auto">
-					<h2 class="text-xs font-bold uppercase tracking-wider text-indigo-600">Everything Your Company Needs</h2>
-					<p class="mt-2 text-3xl sm:text-4xl font-black text-slate-950">A Single Operating System for People & Payroll</p>
-					<p class="mt-4 text-slate-600 text-base">
-						Built for modern companies who need speed, compliance, and crystal clear multi-tenancy.
-					</p>
-				</div>
-
-				<div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
-					<!-- Feature 1 -->
-					<div class="bg-slate-50 p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-indigo-300 transition">
-						<div class="h-12 w-12 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center mb-6">
-							<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-							</svg>
-						</div>
-						<h3 class="text-xl font-bold text-slate-900">Multi-Tenant Company Workspace</h3>
-						<p class="mt-3 text-sm text-slate-600 leading-relaxed">
-							Dedicated company tenant partitions inside Neon PostgreSQL. Your team data, payroll ledgers, and policies are completely isolated and secured.
-						</p>
-						<ul class="mt-6 space-y-2.5 text-xs text-slate-700 font-semibold">
-							<li class="flex items-center space-x-2">
-								<span class="text-emerald-600 font-bold">✓</span>
-								<span>Row-Level Security & Custom Slugs</span>
-							</li>
-							<li class="flex items-center space-x-2">
-								<span class="text-emerald-600 font-bold">✓</span>
-								<span>Configurable Departments & Designations</span>
-							</li>
-							<li class="flex items-center space-x-2">
-								<span class="text-emerald-600 font-bold">✓</span>
-								<span>Real-time DB synchronization</span>
-							</li>
-						</ul>
-					</div>
-
-					<!-- Feature 2 -->
-					<div class="bg-slate-50 p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-indigo-300 transition">
-						<div class="h-12 w-12 rounded-xl bg-violet-100 text-violet-700 flex items-center justify-center mb-6">
-							<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-							</svg>
-						</div>
-						<h3 class="text-xl font-bold text-slate-900">Free Employee Self-Service PWA</h3>
-						<p class="mt-3 text-sm text-slate-600 leading-relaxed">
-							Employees check-in with one tap, view shifts, request time off, and download salary slips right from their phones. Zero software fees for employees.
-						</p>
-						<ul class="mt-6 space-y-2.5 text-xs text-slate-700 font-semibold">
-							<li class="flex items-center space-x-2">
-								<span class="text-emerald-600 font-bold">✓</span>
-								<span>Geofenced Clock-in / Clock-out</span>
-							</li>
-							<li class="flex items-center space-x-2">
-								<span class="text-emerald-600 font-bold">✓</span>
-								<span>Instant Leave Balance & Status</span>
-							</li>
-							<li class="flex items-center space-x-2">
-								<span class="text-emerald-600 font-bold">✓</span>
-								<span>Expense receipt claims & approvals</span>
-							</li>
-						</ul>
-					</div>
-
-					<!-- Feature 3 -->
-					<div class="bg-slate-50 p-8 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md hover:border-indigo-300 transition">
-						<div class="h-12 w-12 rounded-xl bg-cyan-100 text-cyan-700 flex items-center justify-center mb-6">
-							<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-							</svg>
-						</div>
-						<h3 class="text-xl font-bold text-slate-900">Automated Payroll & Slips</h3>
-						<p class="mt-3 text-sm text-slate-600 leading-relaxed">
-							Generate salary slips in one click. Eliza automatically calculates hours from check-in logs, applies statutory tax rules, and distributes PDF slips.
-						</p>
-						<ul class="mt-6 space-y-2.5 text-xs text-slate-700 font-semibold">
-							<li class="flex items-center space-x-2">
-								<span class="text-emerald-600 font-bold">✓</span>
-								<span>One-Click Monthly Run</span>
-							</li>
-							<li class="flex items-center space-x-2">
-								<span class="text-emerald-600 font-bold">✓</span>
-								<span>Dynamic Deductions & Allowances</span>
-							</li>
-							<li class="flex items-center space-x-2">
-								<span class="text-emerald-600 font-bold">✓</span>
-								<span>Direct Bank Disbursal Exports</span>
-							</li>
-						</ul>
-					</div>
-				</div>
-			</div>
-		</section>
-
-		<!-- Interactive ROI & Plan Calculator -->
-		<section class="py-16 max-w-5xl mx-auto px-6 w-full">
-			<div class="bg-gradient-to-r from-indigo-50 via-purple-50 to-white p-8 rounded-2xl border border-indigo-200 shadow-md">
-				<div class="flex flex-col md:flex-row items-center justify-between gap-8">
-					<div class="space-y-3 max-w-md">
-						<span class="px-2.5 py-1 text-xs font-bold rounded-full bg-indigo-100 text-indigo-700 border border-indigo-200 uppercase">Interactive Calculator</span>
-						<h3 class="text-2xl font-black text-slate-950">How big is your team?</h3>
-						<p class="text-sm text-slate-600">
-							Move the slider to see which Eliza plan fits your company and the estimated HR hours you'll save each month.
-						</p>
-
-						<!-- Team Slider -->
-						<div class="pt-4 space-y-2">
-							<div class="flex justify-between text-xs font-bold">
-								<span class="text-slate-600">Team Size:</span>
-								<span class="text-indigo-600 font-mono text-base font-extrabold">{{ teamSize }} Employees</span>
-							</div>
-							<input
-								type="range"
-								min="5"
-								max="150"
-								step="5"
-								v-model.number="teamSize"
-								class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
-							/>
-						</div>
-					</div>
-
-					<div class="bg-white p-6 rounded-xl border border-indigo-200 shadow-md text-center sm:text-left flex flex-col justify-between w-full md:w-72">
-						<div>
-							<p class="text-xs font-bold text-slate-500 uppercase">Recommended Plan</p>
-							<p class="text-2xl font-black text-slate-900 mt-1">{{ calculatedPlan.name }}</p>
-							<p class="text-indigo-600 text-2xl font-black mt-1">${{ calculatedPlan.price }} <span class="text-xs text-slate-500 font-normal">/ month</span></p>
-							<div class="mt-4 pt-4 border-t border-slate-200 text-xs text-slate-700 space-y-1 font-semibold">
-								<p>⚡ Saves <strong class="text-emerald-600 font-bold">{{ calculatedHoursSaved }} hrs</strong> / month</p>
-								<p>👥 Free employee mobile app</p>
-							</div>
-						</div>
-						<button
-							@click="openModal(calculatedPlan.name)"
-							class="mt-5 w-full py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md transition"
-						>
-							Select {{ calculatedPlan.name }}
-						</button>
-					</div>
-				</div>
-			</div>
-		</section>
-
-		<!-- B2B SaaS Pricing Section -->
-		<section id="pricing" class="py-20 border-t border-slate-200 relative bg-slate-50">
-			<div class="max-w-7xl mx-auto px-6">
-				<div class="text-center max-w-3xl mx-auto">
-					<h2 class="text-xs font-bold uppercase tracking-wider text-indigo-600">Transparent B2B Pricing</h2>
-					<p class="mt-2 text-3xl sm:text-4xl font-black text-slate-950">Predictable Plans for Companies</p>
-					<p class="mt-4 text-slate-600 text-base">
-						The employer or HR lead pays the monthly plan. All employees get free self-service access on mobile & web.
-					</p>
-
-					<!-- Annual / Monthly Toggle -->
-					<div class="mt-8 inline-flex items-center bg-slate-200/80 p-1 rounded-xl border border-slate-300 text-xs">
-						<button
-							@click="isAnnual = false"
-							:class="!isAnnual ? 'bg-white text-indigo-700 font-bold shadow-sm' : 'text-slate-600 hover:text-slate-900 font-medium'"
-							class="px-4 py-2 rounded-lg transition"
-						>
-							Monthly Billing
-						</button>
-						<button
-							@click="isAnnual = true"
-							:class="isAnnual ? 'bg-white text-indigo-700 font-bold shadow-sm' : 'text-slate-600 hover:text-slate-900 font-medium'"
-							class="px-4 py-2 rounded-lg transition flex items-center space-x-1.5"
-						>
-							<span>Annual Billing</span>
-							<span class="px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">Save 20%</span>
-						</button>
-					</div>
-				</div>
-
-				<!-- Pricing Cards Grid -->
-				<div class="mt-16 grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
-					<!-- 1. Starter Tier -->
-					<div class="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm flex flex-col justify-between">
-						<div>
-							<div class="flex justify-between items-center">
-								<h3 class="text-lg font-bold text-slate-900">Starter</h3>
-								<span class="text-xs font-bold text-slate-500">Early Startups</span>
-							</div>
-							<div class="mt-4 flex items-baseline">
-								<span class="text-4xl font-black text-slate-900">${{ isAnnual ? 23 : 29 }}</span>
-								<span class="ml-2 text-sm text-slate-500 font-medium">/ month</span>
-							</div>
-							<p class="mt-3 text-xs text-slate-600">Ideal for small teams getting started with structured HR.</p>
-
-							<div class="mt-6 pt-6 border-t border-slate-200 space-y-3 text-xs text-slate-700 font-medium">
-								<p class="font-bold text-slate-900">Includes:</p>
-								<div class="flex items-center space-x-2">
-									<span class="text-indigo-600 font-bold">✓</span>
-									<span><strong>Up to 15 employees</strong></span>
-								</div>
-								<div class="flex items-center space-x-2">
-									<span class="text-indigo-600 font-bold">✓</span>
-									<span>Employee Geofenced Check-in</span>
-								</div>
-								<div class="flex items-center space-x-2">
-									<span class="text-indigo-600 font-bold">✓</span>
-									<span>Leave & Absence Tracking</span>
-								</div>
-								<div class="flex items-center space-x-2">
-									<span class="text-indigo-600 font-bold">✓</span>
-									<span>Basic Shift Scheduling</span>
-								</div>
-								<div class="flex items-center space-x-2">
-									<span class="text-indigo-600 font-bold">✓</span>
-									<span>Employee Mobile PWA</span>
-								</div>
-								<div class="flex items-center space-x-2">
-									<span class="text-indigo-600 font-bold">✓</span>
-									<span>Standard Email Support</span>
-								</div>
-							</div>
-						</div>
-
-						<button
-							@click="openModal('Starter')"
-							class="mt-8 w-full py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs border border-slate-300 transition"
-						>
-							Start with Starter
-						</button>
-					</div>
-
-					<!-- 2. Growth Tier (Most Popular) -->
-					<div class="bg-white rounded-2xl border-2 border-indigo-600 shadow-xl shadow-indigo-100 p-8 flex flex-col justify-between relative transform lg:-translate-y-2">
-						<div class="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full bg-indigo-600 text-white text-[11px] font-black tracking-wider uppercase shadow-md">
-							Most Popular
-						</div>
-
-						<div>
-							<div class="flex justify-between items-center mt-2">
-								<h3 class="text-lg font-black text-slate-900">Growth</h3>
-								<span class="text-xs font-bold text-indigo-700">Scaling Teams</span>
-							</div>
-							<div class="mt-4 flex items-baseline">
-								<span class="text-4xl font-black text-slate-900">${{ isAnnual ? 63 : 79 }}</span>
-								<span class="ml-2 text-sm text-slate-500 font-medium">/ month</span>
-							</div>
-							<p class="mt-3 text-xs text-slate-600">Complete workforce automation, payroll, and roster management.</p>
-
-							<div class="mt-6 pt-6 border-t border-slate-200 space-y-3 text-xs text-slate-700 font-medium">
-								<p class="font-bold text-slate-900">Everything in Starter, plus:</p>
-								<div class="flex items-center space-x-2">
-									<span class="text-emerald-600 font-bold">✓</span>
-									<span><strong>Up to 50 employees</strong></span>
-								</div>
-								<div class="flex items-center space-x-2">
-									<span class="text-emerald-600 font-bold">✓</span>
-									<span><strong>Automated Payroll & Salary Slips</strong></span>
-								</div>
-								<div class="flex items-center space-x-2">
-									<span class="text-emerald-600 font-bold">✓</span>
-									<span>Expense Claims & Manager Approvals</span>
-								</div>
-								<div class="flex items-center space-x-2">
-									<span class="text-emerald-600 font-bold">✓</span>
-									<span>Advanced Shift Rostering & Swaps</span>
-								</div>
-								<div class="flex items-center space-x-2">
-									<span class="text-emerald-600 font-bold">✓</span>
-									<span>HR Desk Analytics & Reports</span>
-								</div>
-								<div class="flex items-center space-x-2">
-									<span class="text-emerald-600 font-bold">✓</span>
-									<span>Priority 24/7 Slack & Email Support</span>
-								</div>
-							</div>
-						</div>
-
-						<button
-							@click="openModal('Growth')"
-							class="mt-8 w-full py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs shadow-lg shadow-indigo-600/25 transition transform hover:-translate-y-0.5"
-						>
-							Start 14-Day Free Trial
-						</button>
-					</div>
-
-					<!-- 3. Enterprise Tier -->
-					<div class="bg-white rounded-2xl border border-slate-200 p-8 shadow-sm flex flex-col justify-between">
-						<div>
-							<div class="flex justify-between items-center">
-								<h3 class="text-lg font-bold text-slate-900">Enterprise</h3>
-								<span class="text-xs font-bold text-slate-500">High Volume</span>
-							</div>
-							<div class="mt-4 flex items-baseline">
-								<span class="text-4xl font-black text-slate-900">${{ isAnnual ? 159 : 199 }}</span>
-								<span class="ml-2 text-sm text-slate-500 font-medium">/ month</span>
-							</div>
-							<p class="mt-3 text-xs text-slate-600">Unrestricted scale, compliance controls, and custom integrations.</p>
-
-							<div class="mt-6 pt-6 border-t border-slate-200 space-y-3 text-xs text-slate-700 font-medium">
-								<p class="font-bold text-slate-900">Everything in Growth, plus:</p>
-								<div class="flex items-center space-x-2">
-									<span class="text-indigo-600 font-bold">✓</span>
-									<span><strong>Unlimited Employees & Seats</strong></span>
-								</div>
-								<div class="flex items-center space-x-2">
-									<span class="text-indigo-600 font-bold">✓</span>
-									<span>Multi-Branch & Custom Policies</span>
-								</div>
-								<div class="flex items-center space-x-2">
-									<span class="text-indigo-600 font-bold">✓</span>
-									<span>Custom Doctype Fields & Workflows</span>
-								</div>
-								<div class="flex items-center space-x-2">
-									<span class="text-indigo-600 font-bold">✓</span>
-									<span>99.99% Uptime SLA Guarantee</span>
-								</div>
-								<div class="flex items-center space-x-2">
-									<span class="text-indigo-600 font-bold">✓</span>
-									<span>Dedicated Enterprise Account Manager</span>
-								</div>
-							</div>
-						</div>
-
-						<button
-							@click="openModal('Enterprise')"
-							class="mt-8 w-full py-3 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs border border-slate-300 transition"
-						>
-							Contact Enterprise
-						</button>
-					</div>
-				</div>
-			</div>
-		</section>
-
-		<!-- System Architecture Overview -->
-		<section id="architecture" class="py-20 bg-white border-t border-slate-200">
-			<div class="max-w-7xl mx-auto px-6">
-				<div class="text-center max-w-3xl mx-auto mb-16">
-					<h2 class="text-xs font-bold uppercase tracking-wider text-indigo-600">B2B SaaS Engine</h2>
-					<p class="mt-2 text-3xl sm:text-4xl font-black text-slate-950">How Eliza Multi-Tenancy Works</p>
-					<p class="mt-4 text-slate-600 text-base">
-						A modern 3-tier architecture ensuring complete company isolation, sub-second responses, and effortless employee onboarding.
-					</p>
-				</div>
-
-				<div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
-					<div class="bg-slate-50 p-6 rounded-xl border border-slate-200 space-y-3">
-						<div class="text-indigo-600 font-bold uppercase text-[11px] tracking-wider">Tier 1: Cloud Database</div>
-						<h4 class="text-base font-bold text-slate-900">Neon PostgreSQL</h4>
-						<p class="text-slate-600 leading-relaxed">
-							Every company is partitioned by <code class="text-indigo-700 bg-indigo-50 px-1 py-0.5 rounded border border-indigo-200 font-mono">tenant_id</code>. All tables (employees, attendances, payroll, shifts) maintain strict foreign-key tenant constraints.
-						</p>
-						<span class="inline-block px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold border border-emerald-300">
-							AWS us-east-2 • Online
-						</span>
-					</div>
-
-					<div class="bg-slate-50 p-6 rounded-xl border border-slate-200 space-y-3">
-						<div class="text-violet-600 font-bold uppercase text-[11px] tracking-wider">Tier 2: Backend API Engine</div>
-						<h4 class="text-base font-bold text-slate-900">Multi-Tenant HTTP Core</h4>
-						<p class="text-slate-600 leading-relaxed">
-							Dynamic session extraction from cookies and headers automatically scopes all requests. Enforces seat quotas per subscription tier during employee invitations.
-						</p>
-						<span class="inline-block px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-800 text-[10px] font-bold border border-indigo-300">
-							Port 8000 • Autonomous Server
-						</span>
-					</div>
-
-					<div class="bg-slate-50 p-6 rounded-xl border border-slate-200 space-y-3">
-						<div class="text-cyan-600 font-bold uppercase text-[11px] tracking-wider">Tier 3: Dual Frontend</div>
-						<h4 class="text-base font-bold text-slate-900">Desktop Suite & Mobile PWA</h4>
-						<p class="text-slate-600 leading-relaxed">
-							HR leaders operate through the Vue 3 Roster & Setup Desktop Suite, while staff use the responsive Mobile PWA for geofenced check-in and leaves.
-						</p>
-						<span class="inline-block px-2.5 py-1 rounded-full bg-cyan-100 text-cyan-800 text-[10px] font-bold border border-cyan-300">
-							Desktop 8081 & Mobile 8080
-						</span>
-					</div>
-				</div>
-			</div>
-		</section>
-
-		<!-- Frequently Asked Questions -->
-		<section id="faq" class="py-20 border-t border-slate-200 max-w-4xl mx-auto px-6 w-full">
-			<div class="text-center mb-12">
-				<h2 class="text-xs font-bold uppercase tracking-wider text-indigo-600">Answers to Your Questions</h2>
-				<p class="mt-2 text-3xl font-black text-slate-950">Frequently Asked Questions</p>
-			</div>
-
-			<div class="space-y-4">
-				<div
-					v-for="(faq, idx) in faqs"
-					:key="idx"
-					class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden"
-				>
-					<button
-						@click="faq.open = !faq.open"
-						class="w-full p-5 text-left flex justify-between items-center text-sm font-bold text-slate-900 hover:text-indigo-600 transition"
-					>
-						<span>{{ faq.question }}</span>
-						<svg
-							:class="faq.open ? 'rotate-180 text-indigo-600' : 'text-slate-400'"
-							class="w-4 h-4 transform transition-transform"
-							fill="none"
-							stroke="currentColor"
-							viewBox="0 0 24 24"
-						>
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-						</svg>
-					</button>
-					<div v-show="faq.open" class="px-5 pb-5 text-xs text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
-						{{ faq.answer }}
-					</div>
-				</div>
-			</div>
-		</section>
-
-		<!-- Bottom Call-to-Action -->
-		<section class="py-20 bg-gradient-to-b from-indigo-50/50 to-white border-t border-slate-200 text-center relative overflow-hidden">
-			<div class="max-w-4xl mx-auto px-6 relative z-10">
-				<h2 class="text-3xl sm:text-5xl font-black text-slate-950">
-					Ready to Upgrade Your Company's HR?
-				</h2>
-				<p class="mt-4 text-slate-600 text-base max-w-2xl mx-auto">
-					Join ambitious companies who run on Eliza. Get started with a 14-day free trial — no credit card required.
+		<!-- Final CTA -->
+		<section class="final c">
+			<div class="w">
+				<h1 style="font-size: clamp(40px, 6vw, 64px)">Connect your HR, finance, and operations teams.</h1>
+				<p style="color: var(--mute); max-width: 520px; margin: 20px auto 28px">
+					Eliza is the missing piece that brings your payroll, payments and people together, so you can build with confidence.
 				</p>
-				<div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-					<button
-						@click="openModal('Growth')"
-						class="px-8 py-3.5 text-sm font-bold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 shadow-xl shadow-indigo-600/25 transition transform hover:-translate-y-0.5"
-					>
-						Start Free Company Trial
-					</button>
-					<router-link
-						to="/desk/hr-setup"
-						class="px-6 py-3.5 text-sm font-bold rounded-xl text-slate-800 bg-white hover:bg-slate-100 border border-slate-300 shadow-sm transition"
-					>
-						View Demo Workspace
-					</router-link>
-				</div>
+				<button class="btn" style="padding: 12px 28px; font-size: 16px" @click="openModal('Growth')">Get a demo</button>
 			</div>
 		</section>
 
 		<!-- Footer -->
-		<footer class="bg-white border-t border-slate-200 py-12 text-xs text-slate-600">
-			<div class="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-6">
-				<div class="flex items-center space-x-3">
-					<div class="h-7 w-7 rounded-lg bg-indigo-600 flex items-center justify-center font-black text-white text-sm">
-						E
+		<footer id="footer">
+			<div class="w">
+				<div class="fg">
+					<router-link class="logo" to="/">
+						<i></i>eliza
+					</router-link>
+					<div>
+						<b>Products</b>
+						<a href="#hcm">HCM</a>
+						<a href="#field">Field Operations</a>
+						<a href="#expense">Expense Management</a>
 					</div>
-					<span class="text-slate-900 font-black text-sm">Eliza HR</span>
-					<span>•</span>
-					<span>© 2026 Eliza Inc. All rights reserved.</span>
+					<div>
+						<b>Features</b>
+						<router-link to="/desk/hr-setup">HRIS &amp; Directory</router-link>
+						<router-link to="/roster">Shift Rostering</router-link>
+						<a href="http://127.0.0.1:8080" target="_blank">Mobile PWA</a>
+						<a href="#hcm">Benefits &amp; Payroll</a>
+					</div>
+					<div>
+						<b>Platform</b>
+						<router-link to="/desk/hr-setup">HR Desk</router-link>
+						<a href="#solutions">Connected Systems</a>
+						<a href="#support">US Support</a>
+					</div>
+					<div>
+						<b>Company</b>
+						<a href="#stories">Customers</a>
+						<a href="#insights">Insights</a>
+						<a href="#" @click.prevent="openModal('Growth')">Get a demo</a>
+					</div>
 				</div>
 
-				<div class="flex items-center space-x-6 text-slate-600 font-semibold">
-					<router-link to="/desk/hr-setup" class="hover:text-indigo-600 transition">HR Setup</router-link>
-					<router-link to="/roster" class="hover:text-indigo-600 transition">Roster View</router-link>
-					<a href="http://127.0.0.1:8080" target="_blank" class="hover:text-indigo-600 transition">Employee PWA</a>
-					<span class="flex items-center space-x-1.5 text-emerald-600">
-						<span class="h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
-						<span>All Systems Operational</span>
-					</span>
+				<div class="fb">
+					<span>Get the latest from Eliza</span>
+					<form class="form" style="margin: 0" @submit.prevent="submitNewsletter">
+						<input type="email" v-model="newsletterEmail" placeholder="Work email" aria-label="Newsletter email" required />
+						<button class="btn" type="submit">Subscribe</button>
+					</form>
+				</div>
+
+				<div class="fb" style="border: 0; margin: 0; padding-top: 12px">
+					<span>© 2026 Eliza Inc. All rights reserved.</span>
+					<span>Privacy Policy &nbsp; Terms of Use</span>
 				</div>
 			</div>
 		</footer>
 
-		<!-- Company Registration / Onboarding Modal -->
-		<div
-			v-if="showModal"
-			class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-opacity"
-		>
-			<div class="bg-white border border-slate-200 rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative text-slate-900">
-				<!-- Close Button -->
-				<button
-					@click="showModal = false"
-					class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 p-1 rounded-lg hover:bg-slate-100 transition"
-				>
-					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-					</svg>
-				</button>
+		<!-- Company Registration & Demo Modal -->
+		<div v-if="showModal" class="modal-overlay" @click.self="showModal = false">
+			<div class="modal-card">
+				<button class="modal-close" @click="showModal = false">&times;</button>
 
-				<!-- Modal Header -->
-				<div class="text-left">
-					<div class="h-10 w-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center text-white font-black text-lg mb-4 shadow-md shadow-indigo-500/20">
-						E
-					</div>
-					<h3 class="text-2xl font-black text-slate-950">Register Your Company on Eliza</h3>
-					<p class="text-xs text-slate-600 mt-1">
-						You are registering as the <strong class="text-indigo-700 font-bold">Company Lead / HR Admin</strong>. All employees you invite will access self-service features for free.
-					</p>
+				<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px">
+					<span class="logo"><i></i>eliza</span>
+					<span class="pill" style="margin-left: 8px">14-Day Free Trial</span>
 				</div>
 
-				<!-- Success Banner -->
-				<div v-if="successMessage" class="mt-4 p-4 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs flex items-center space-x-3">
-					<svg class="w-5 h-5 flex-shrink-0 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-					</svg>
-					<div>
-						<p class="font-bold text-slate-900">{{ successMessage }}</p>
-						<p class="text-[11px] text-emerald-700 mt-0.5">Redirecting to your HR Setup Workspace in {{ redirectCountdown }}s...</p>
-					</div>
+				<h3 style="font-size: 24px; margin-bottom: 6px">Get your Eliza Demo &amp; Workspace</h3>
+				<p style="color: var(--mute); font-size: 13px; margin: 0 0 20px">
+					The company lead is the subscriber. All employees you invite will access self-service tools for free.
+				</p>
+
+				<!-- Success Message -->
+				<div v-if="successMessage" style="background: #e7f2ea; color: var(--green); border: 1px solid #c2e0cd; padding: 14px; border-radius: 6px; font-size: 13px; margin-bottom: 16px">
+					<strong>{{ successMessage }}</strong>
+					<p style="margin: 6px 0 0; font-size: 12px">Redirecting to your HR Setup Workspace in {{ redirectCountdown }}s...</p>
 				</div>
 
-				<!-- Error Banner -->
-				<div v-if="errorMessage" class="mt-4 p-3 rounded-xl bg-rose-50 border border-rose-300 text-rose-800 text-xs font-semibold">
+				<!-- Error Message -->
+				<div v-if="errorMessage" style="background: #fdf2f2; color: var(--maroon); border: 1px solid #f2cfcf; padding: 12px; border-radius: 6px; font-size: 13px; margin-bottom: 16px">
 					{{ errorMessage }}
 				</div>
 
-				<!-- Form Inputs -->
-				<form v-if="!successMessage" @submit.prevent="submitRegistration" class="mt-6 space-y-4 text-xs">
+				<!-- Form -->
+				<form v-if="!successMessage" @submit.prevent="submitRegistration" style="display: flex; flex-direction: column; gap: 14px">
 					<div>
-						<label class="block font-bold text-slate-700 mb-1">Company / Organization Name</label>
+						<label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px; color: var(--ink)">Company / Contractor Name</label>
 						<input
-							v-model="form.company_name"
 							type="text"
+							v-model="form.company_name"
+							placeholder="e.g. Knight Construction Group"
 							required
-							placeholder="e.g. Acme Technologies Inc."
-							class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+							class="modal-input"
 						/>
 					</div>
 
-					<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+					<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px">
 						<div>
-							<label class="block font-bold text-slate-700 mb-1">Lead Full Name</label>
+							<label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px; color: var(--ink)">Lead Full Name</label>
 							<input
-								v-model="form.admin_name"
 								type="text"
+								v-model="form.admin_name"
+								placeholder="e.g. John Knight"
 								required
-								placeholder="e.g. Sarah Jenkins"
-								class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+								class="modal-input"
 							/>
 						</div>
 						<div>
-							<label class="block font-bold text-slate-700 mb-1">Work Email</label>
+							<label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px; color: var(--ink)">Work Email</label>
 							<input
-								v-model="form.admin_email"
 								type="email"
+								v-model="form.admin_email"
+								placeholder="john@knightcg.com"
 								required
-								placeholder="sarah@acme.com"
-								class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+								class="modal-input"
 							/>
 						</div>
 					</div>
 
 					<div>
-						<label class="block font-bold text-slate-700 mb-1">Account Password</label>
+						<label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px; color: var(--ink)">Password</label>
 						<input
-							v-model="form.password"
 							type="password"
-							required
+							v-model="form.password"
 							placeholder="••••••••••••"
-							class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+							required
+							class="modal-input"
 						/>
 					</div>
 
 					<div>
-						<label class="block font-bold text-slate-700 mb-1">Selected Plan Tier</label>
-						<div class="grid grid-cols-3 gap-2">
+						<label style="display: block; font-size: 12px; font-weight: 500; margin-bottom: 4px; color: var(--ink)">Select Plan Tier</label>
+						<div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px">
 							<button
 								type="button"
 								v-for="plan in ['Starter', 'Growth', 'Enterprise']"
 								:key="plan"
 								@click="form.plan_tier = plan"
-								:class="form.plan_tier === plan ? 'bg-indigo-600 text-white border-indigo-600 font-bold shadow-sm' : 'bg-slate-50 text-slate-700 border-slate-300 hover:bg-slate-100 font-medium'"
-								class="py-2 rounded-lg border text-xs transition"
+								:class="['btn', form.plan_tier === plan ? '' : 'o']"
+								style="padding: 8px; font-size: 12px; text-align: center"
 							>
 								{{ plan }}
 							</button>
 						</div>
 					</div>
 
-					<div class="pt-2">
-						<button
-							type="submit"
-							:disabled="isSubmitting"
-							class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs shadow-lg shadow-indigo-600/25 transition flex items-center justify-center space-x-2 disabled:opacity-50"
-						>
-							<svg v-if="isSubmitting" class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
-								<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-								<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-							</svg>
-							<span>{{ isSubmitting ? 'Creating Workspace...' : 'Create Company Workspace' }}</span>
-						</button>
-					</div>
+					<button
+						type="submit"
+						class="btn"
+						:disabled="isSubmitting"
+						style="width: 100%; padding: 12px; font-size: 14px; margin-top: 8px"
+					>
+						{{ isSubmitting ? 'Configuring Workspace...' : 'Create Company Workspace' }}
+					</button>
 
-					<p class="text-[10px] text-center text-slate-500">
-						By registering, you agree to Eliza's Terms of Service and Privacy Policy. Includes a 14-day full feature trial.
+					<p style="color: var(--mute); font-size: 11px; text-align: center; margin: 0">
+						Includes instant access to the HR Setup Workspace, Month Roster, and Employee PWA.
 					</p>
 				</form>
 			</div>
@@ -996,15 +489,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
 
 // State
-const activePreviewTab = ref("shifts");
-const isAnnual = ref(false);
-const teamSize = ref(25);
+const activeTab = ref("hcm");
+const heroEmail = ref("");
+const newsletterEmail = ref("");
 const showModal = ref(false);
 const isSubmitting = ref(false);
 const errorMessage = ref("");
@@ -1019,61 +512,31 @@ const form = ref({
 	plan_tier: "Growth",
 });
 
-const previewTabs = [
-	{ id: "shifts", name: "Shift Rostering" },
-	{ id: "employees", name: "Employee Directory" },
-	{ id: "attendance", name: "Live Check-in" },
-	{ id: "payroll", name: "Automated Payroll" },
-];
-
-const faqs = ref([
-	{
-		question: "Who pays the monthly fee for Eliza?",
-		answer: "The company or HR lead is the primary subscriber who pays a flat monthly fee based on your seat tier. All invited employees access their mobile and web self-service tools completely free.",
-		open: true,
-	},
-	{
-		question: "Can employees clock in from their mobile phones?",
-		answer: "Yes! Eliza includes an installable Mobile PWA optimized for iOS and Android. Employees can clock in/out with geofencing, submit leave requests, view upcoming shifts, and download payslips.",
-		open: false,
-	},
-	{
-		question: "How does multi-tenant data separation work?",
-		answer: "Every organization has a dedicated tenant_id in our Neon PostgreSQL database. All records—from salary slips to shift rosters—are partition-scoped so there is zero data crossover between companies.",
-		open: false,
-	},
-	{
-		question: "Can I upgrade or downgrade plans anytime?",
-		answer: "Yes, you can upgrade, downgrade, or cancel your subscription at any time without penalty. When you upgrade, your seat limit is expanded immediately.",
-		open: false,
-	},
-]);
-
-// Calculator Computeds
-const calculatedPlan = computed(() => {
-	if (teamSize.value <= 15) {
-		return { name: "Starter", price: isAnnual.value ? 23 : 29 };
-	} else if (teamSize.value <= 50) {
-		return { name: "Growth", price: isAnnual.value ? 63 : 79 };
-	} else {
-		return { name: "Enterprise", price: isAnnual.value ? 159 : 199 };
+function scrollToTab(tabId: string) {
+	activeTab.value = tabId;
+	const el = document.getElementById(tabId);
+	if (el) {
+		el.scrollIntoView({ behavior: "smooth" });
 	}
-});
-
-const calculatedHoursSaved = computed(() => {
-	return Math.round(teamSize.value * 1.4);
-});
-
-// Actions
-function scrollToTop() {
-	window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-function openModal(plan: string) {
+function openModal(plan: string = "Growth") {
 	form.value.plan_tier = plan;
+	if (heroEmail.value && !form.value.admin_email) {
+		form.value.admin_email = heroEmail.value;
+	}
 	errorMessage.value = "";
 	successMessage.value = "";
 	showModal.value = true;
+}
+
+function submitHeroEmail() {
+	openModal("Growth");
+}
+
+function submitNewsletter() {
+	alert(`Thank you for subscribing with ${newsletterEmail.value}!`);
+	newsletterEmail.value = "";
 }
 
 async function submitRegistration() {
@@ -1095,8 +558,7 @@ async function submitRegistration() {
 
 		if (response.ok && result.message && result.message.status === "success") {
 			successMessage.value = `Welcome to Eliza! Registered ${form.value.company_name} on the ${form.value.plan_tier} Plan.`;
-			
-			// Countdown timer and redirect
+
 			let count = 3;
 			redirectCountdown.value = count;
 			const interval = setInterval(() => {
@@ -1118,3 +580,739 @@ async function submitRegistration() {
 	}
 }
 </script>
+
+<style scoped>
+/* Eliza – The Connected Construction Platform Exact Design System */
+.eliza-root {
+	--bg: #f6f4ef;
+	--surface: #fff;
+	--ink: #1a1a1a;
+	--mute: #6b6a66;
+	--line: #dedbd3;
+	--maroon: #5a1a1f;
+	--green: #1f5a3a;
+	--sand: #a8814f;
+	--btn: #14110f;
+	background: var(--bg);
+	color: var(--ink);
+	font: 400 16px/1.5 "Inter Tight", system-ui, -apple-system, sans-serif;
+	min-height: 100vh;
+	box-sizing: border-box;
+}
+
+@media (prefers-color-scheme: dark) {
+	.eliza-root:not([data-theme="light"]) {
+		--bg: #171513;
+		--surface: #201d1a;
+		--ink: #f1eee8;
+		--mute: #a09c93;
+		--line: #34302b;
+		--btn: #f1eee8;
+	}
+}
+
+* {
+	box-sizing: border-box;
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+	outline: 2px solid var(--maroon);
+	outline-offset: 2px;
+}
+
+.w {
+	max-width: 1120px;
+	margin: 0 auto;
+	padding: 0 24px;
+}
+
+h1,
+h2,
+h3 {
+	font-weight: 500;
+	letter-spacing: -0.03em;
+	line-height: 1.05;
+	margin: 0;
+	color: var(--ink);
+}
+
+h1 {
+	font-size: clamp(44px, 7vw, 72px);
+}
+h2 {
+	font-size: clamp(32px, 4.5vw, 48px);
+}
+h3 {
+	font-size: clamp(28px, 3.4vw, 40px);
+}
+
+.btn {
+	display: inline-block;
+	background: var(--btn);
+	color: var(--bg);
+	border: 0;
+	border-radius: 6px;
+	padding: 10px 18px;
+	font: 500 14px inherit;
+	font-family: inherit;
+	cursor: pointer;
+	text-align: center;
+	transition: opacity 0.15s ease;
+}
+.btn:hover {
+	opacity: 0.9;
+}
+.btn.o {
+	background: none;
+	color: var(--ink);
+	border: 1px solid var(--line);
+}
+.btn.o:hover {
+	background: var(--surface);
+}
+
+header {
+	position: sticky;
+	top: 0;
+	z-index: 50;
+	background: var(--bg);
+	border-bottom: 1px solid var(--line);
+}
+
+header .w {
+	display: flex;
+	align-items: center;
+	height: 56px;
+	gap: 32px;
+}
+
+.logo {
+	font-weight: 600;
+	font-size: 20px;
+	letter-spacing: -0.04em;
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	color: var(--ink);
+}
+.logo i {
+	width: 18px;
+	height: 18px;
+	border-radius: 50% 50% 50% 0;
+	background: var(--ink);
+	display: inline-block;
+}
+
+nav {
+	display: flex;
+	gap: 28px;
+	font-size: 14px;
+	flex: 1;
+	justify-content: center;
+}
+nav a {
+	color: var(--mute);
+	transition: color 0.15s ease;
+}
+nav a:hover {
+	color: var(--ink);
+}
+
+.hr {
+	display: flex;
+	gap: 10px;
+	align-items: center;
+	font-size: 14px;
+}
+.hr .o {
+	padding: 8px 12px;
+	border: 1px solid var(--line);
+	border-radius: 6px;
+	font-size: 13px;
+	color: var(--mute);
+	background: var(--surface);
+}
+.hr .o:hover {
+	color: var(--ink);
+}
+
+.hero {
+	padding: 72px 0 0;
+	border-bottom: 1px solid var(--line);
+}
+.hero .w {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 40px;
+	align-items: end;
+}
+.hero p {
+	color: var(--mute);
+	max-width: 380px;
+	margin: 20px 0 28px;
+}
+
+.form {
+	display: flex;
+	gap: 8px;
+	max-width: 420px;
+}
+.form input {
+	flex: 1;
+	padding: 10px 12px;
+	border: 1px solid var(--line);
+	border-radius: 6px;
+	background: var(--surface);
+	color: var(--ink);
+	font: inherit;
+	font-size: 14px;
+	min-width: 0;
+}
+
+.phone {
+	justify-self: center;
+	width: 280px;
+	background: var(--surface);
+	border: 1px solid var(--line);
+	border-radius: 28px 28px 0 0;
+	padding: 20px 18px 0;
+	height: 360px;
+	box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+}
+.phone small {
+	color: var(--mute);
+	font-size: 12px;
+}
+.phone b {
+	display: block;
+	font-size: 15px;
+	margin-bottom: 12px;
+	font-weight: 500;
+	color: var(--ink);
+}
+
+.kp {
+	display: flex;
+	gap: 8px;
+	margin-bottom: 14px;
+}
+.kp div {
+	flex: 1;
+	border: 1px solid var(--line);
+	border-radius: 8px;
+	padding: 8px;
+	font-size: 11px;
+	color: var(--mute);
+}
+.kp strong {
+	display: block;
+	font-size: 20px;
+	color: var(--ink);
+	font-weight: 500;
+}
+
+.bars {
+	display: flex;
+	gap: 10px;
+	align-items: flex-end;
+	height: 110px;
+	border-bottom: 1px solid var(--line);
+	padding: 0 4px;
+}
+.bars span {
+	flex: 1;
+	background: var(--maroon);
+	opacity: 0.85;
+	border-radius: 3px 3px 0 0;
+}
+.bars span:nth-child(odd) {
+	background: var(--sand);
+}
+
+.trust {
+	padding: 32px 0 8px;
+	text-align: center;
+	font-size: 11px;
+	color: var(--mute);
+}
+.logos {
+	display: grid;
+	grid-template-columns: repeat(5, 1fr);
+	border-top: 1px solid var(--line);
+	border-left: 1px solid var(--line);
+	margin-top: 14px;
+}
+.logos div {
+	border-right: 1px solid var(--line);
+	border-bottom: 1px solid var(--line);
+	height: 72px;
+	display: grid;
+	place-items: center;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	color: var(--mute);
+	font-size: 15px;
+}
+
+section {
+	padding: 96px 0;
+}
+
+.tabs {
+	display: flex;
+	gap: 4px;
+	margin: 40px 0 28px;
+	padding: 4px;
+	background: var(--surface);
+	border: 1px solid var(--line);
+	border-radius: 8px;
+}
+.tabs a {
+	flex: 1;
+	text-align: center;
+	padding: 10px;
+	font-size: 14px;
+	border-radius: 6px;
+	color: var(--mute);
+	transition: all 0.15s ease;
+}
+.tabs a.active,
+.tabs a:first-child:not(.inactive) {
+	background: var(--bg);
+	color: var(--ink);
+}
+
+.feat {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	border: 1px solid var(--line);
+	background: var(--surface);
+	margin-bottom: 28px;
+	min-height: 420px;
+}
+.feat > div:first-child {
+	padding: 48px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 18px;
+}
+.feat p {
+	color: var(--mute);
+	max-width: 340px;
+	margin: 0;
+}
+.feat .tags {
+	font-size: 13px;
+	color: var(--mute);
+	display: flex;
+	gap: 18px;
+	margin-top: 20px;
+}
+.feat .tag {
+	font-size: 13px;
+	color: var(--mute);
+	display: flex;
+	gap: 8px;
+	align-items: center;
+}
+.feat .tag:before {
+	content: "";
+	width: 8px;
+	height: 8px;
+	background: currentColor;
+	border-radius: 2px;
+}
+
+.pn {
+	display: grid;
+	place-items: center;
+	padding: 32px;
+	overflow: hidden;
+}
+.pn.m {
+	background: var(--maroon);
+}
+.pn.t {
+	background: #8a6a43;
+}
+.pn.g {
+	background: var(--green);
+}
+
+.card {
+	background: #fff;
+	color: #1a1a1a;
+	border-radius: 12px;
+	padding: 18px;
+	width: 260px;
+	font-size: 13px;
+	box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+.card h4 {
+	margin: 0 0 12px;
+	font-weight: 500;
+	font-size: 15px;
+}
+.row {
+	display: flex;
+	justify-content: space-between;
+	padding: 8px 0;
+	border-top: 1px solid #eee;
+}
+.row span:first-child {
+	color: #777;
+}
+
+.timer {
+	font-size: 44px;
+	font-weight: 500;
+	letter-spacing: -0.03em;
+	color: #1a1a1a;
+}
+.pill {
+	font-size: 11px;
+	background: #e7f2ea;
+	color: var(--green);
+	border-radius: 99px;
+	padding: 2px 8px;
+	display: inline-block;
+}
+
+.cta {
+	border: 1px solid var(--line);
+	background: var(--surface);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 36px 40px;
+	gap: 24px;
+	flex-wrap: wrap;
+}
+.cta h4 {
+	font-size: 22px;
+	font-weight: 500;
+	margin: 0;
+	letter-spacing: -0.02em;
+	max-width: 280px;
+	line-height: 1.2;
+}
+
+.c {
+	text-align: center;
+}
+.c h2 {
+	max-width: 640px;
+	margin: 0 auto 20px;
+}
+.c h2 em {
+	font-style: normal;
+	color: var(--maroon);
+}
+
+.story {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	background: var(--surface);
+	border: 1px solid var(--line);
+	margin-top: 48px;
+	text-align: left;
+}
+.story > div:first-child {
+	padding: 40px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	gap: 40px;
+}
+.story .ph {
+	background: linear-gradient(135deg, #3b3a37, #8c8478);
+	min-height: 300px;
+	display: grid;
+	place-items: center;
+	color: #fff;
+}
+.play {
+	width: 56px;
+	height: 56px;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.9);
+	display: grid;
+	place-items: center;
+	color: #222;
+	cursor: pointer;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.meta {
+	font-size: 13px;
+	color: var(--mute);
+	display: flex;
+	gap: 20px;
+	flex-wrap: wrap;
+}
+
+.grid2 {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	border: 1px solid var(--line);
+	background: var(--surface);
+	margin-top: 40px;
+}
+.grid2 > div {
+	padding: 32px;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	min-height: 260px;
+}
+.grid2 > div:nth-child(odd) {
+	border-right: 1px solid var(--line);
+}
+.grid2 > div:nth-child(-n + 2) {
+	border-bottom: 1px solid var(--line);
+}
+.grid2 p {
+	color: var(--mute);
+	margin: 0;
+	font-size: 15px;
+	max-width: 380px;
+}
+.grid2 a {
+	font-size: 14px;
+	margin-top: auto;
+	font-weight: 500;
+	color: var(--ink);
+}
+
+.int {
+	background: var(--maroon);
+	color: #f6efe6;
+	border-radius: 4px;
+	padding: 56px 40px 0;
+	text-align: center;
+}
+.int h3 {
+	font-size: 30px;
+	margin: 8px 0 12px;
+	color: #f6efe6;
+}
+.int p {
+	max-width: 460px;
+	margin: 0 auto 24px;
+	color: #d8c8c0;
+	font-size: 15px;
+}
+.int .btn {
+	background: #fff;
+	color: #1a1a1a;
+}
+.int .row2 {
+	display: flex;
+	justify-content: space-around;
+	margin-top: 48px;
+	padding: 32px 0;
+	border-top: 1px solid #7a3a3f;
+	font-size: 24px;
+	font-weight: 600;
+	gap: 16px;
+	overflow-x: auto;
+}
+
+.sup {
+	display: grid;
+	grid-template-columns: 200px 1fr;
+	gap: 32px;
+}
+.sup .cards {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	border: 1px solid var(--line);
+	background: var(--surface);
+	margin-top: 32px;
+}
+.sup .cards > div {
+	padding: 28px;
+	min-height: 280px;
+}
+.sup .cards > div:first-child {
+	border-right: 1px solid var(--line);
+}
+.sup .cards p {
+	color: var(--mute);
+	font-size: 14px;
+}
+
+.map {
+	height: 130px;
+	background: radial-gradient(circle at 30% 50%, #9b86d6 0 30px, transparent 31px),
+		radial-gradient(circle at 60% 40%, #cbbcf0 0 36px, transparent 37px),
+		radial-gradient(circle at 75% 60%, #7a5fc2 0 22px, transparent 23px);
+	margin-top: 12px;
+	border-radius: 4px;
+}
+
+.ins {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 20px;
+	margin-top: 32px;
+}
+.ins .im {
+	height: 150px;
+	background: #cfc9bc;
+	margin-bottom: 12px;
+	border-radius: 4px;
+}
+.ins a:nth-child(1) .im {
+	background: #b9b3a6;
+}
+.ins h4 {
+	margin: 0 0 8px;
+	font-weight: 500;
+	font-size: 16px;
+	color: var(--ink);
+}
+.ins span {
+	font-size: 12px;
+	color: var(--mute);
+	margin-right: 10px;
+}
+
+.final {
+	background: linear-gradient(var(--bg), var(--surface));
+}
+
+footer {
+	border-top: 1px solid var(--line);
+	padding: 56px 0 24px;
+	font-size: 14px;
+}
+.fg {
+	display: grid;
+	grid-template-columns: 1.2fr repeat(4, 1fr);
+	gap: 24px;
+}
+.fg b {
+	display: block;
+	font-weight: 500;
+	margin-bottom: 10px;
+	color: var(--mute);
+	font-size: 12px;
+}
+.fg a {
+	display: block;
+	padding: 3px 0;
+	color: var(--ink);
+}
+.fb {
+	display: flex;
+	justify-content: space-between;
+	gap: 16px;
+	flex-wrap: wrap;
+	border-top: 1px solid var(--line);
+	margin-top: 48px;
+	padding-top: 20px;
+	color: var(--mute);
+	font-size: 12px;
+	align-items: center;
+}
+
+/* Modal styles tailored to the Eliza Design System */
+.modal-overlay {
+	position: fixed;
+	inset: 0;
+	z-index: 100;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(20, 17, 15, 0.6);
+	backdrop-filter: blur(4px);
+	padding: 16px;
+}
+.modal-card {
+	background: var(--surface);
+	color: var(--ink);
+	border: 1px solid var(--line);
+	border-radius: 12px;
+	max-width: 500px;
+	width: 100%;
+	padding: 32px;
+	position: relative;
+	box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2);
+}
+.modal-close {
+	position: absolute;
+	top: 16px;
+	right: 16px;
+	background: none;
+	border: none;
+	font-size: 24px;
+	cursor: pointer;
+	color: var(--mute);
+}
+.modal-close:hover {
+	color: var(--ink);
+}
+.modal-input {
+	width: 100%;
+	padding: 10px 12px;
+	border: 1px solid var(--line);
+	border-radius: 6px;
+	background: var(--bg);
+	color: var(--ink);
+	font: inherit;
+	font-size: 14px;
+	box-sizing: border-box;
+}
+.modal-input:focus {
+	outline: 2px solid var(--maroon);
+	background: var(--surface);
+}
+
+@media (max-width: 820px) {
+	nav,
+	.hr .o {
+		display: none;
+	}
+	.hero .w,
+	.feat,
+	.story,
+	.grid2,
+	.sup,
+	.sup .cards,
+	.ins,
+	.fg {
+		grid-template-columns: 1fr;
+	}
+	.logos {
+		grid-template-columns: repeat(2, 1fr);
+	}
+	.grid2 > div {
+		border-right: 0 !important;
+		border-bottom: 1px solid var(--line);
+	}
+	.sup .cards > div:first-child {
+		border-right: 0;
+	}
+	.feat > div:first-child {
+		padding: 32px 24px;
+	}
+	.tabs a {
+		font-size: 12px;
+	}
+	header .w {
+		justify-content: space-between;
+	}
+	.phone {
+		height: 300px;
+	}
+}
+</style>
