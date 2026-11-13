@@ -4,7 +4,8 @@
 		<header>
 			<div class="w">
 				<router-link class="logo" to="/">
-					<i></i>eliza
+					<img src="/eliza-logo-dark.png" alt="Eliza HR" class="logo-img logo-light" />
+					<img src="/eliza-logo.png" alt="Eliza HR" class="logo-img logo-dark" />
 				</router-link>
 
 				<nav>
@@ -327,7 +328,8 @@
 			<div class="w">
 				<div class="fg">
 					<router-link class="logo" to="/">
-						<i></i>eliza
+						<img src="/eliza-logo-dark.png" alt="Eliza HR" class="logo-img logo-light" />
+						<img src="/eliza-logo.png" alt="Eliza HR" class="logo-img logo-dark" />
 					</router-link>
 					<div>
 						<b>Products</b>
@@ -377,7 +379,7 @@
 				<button class="modal-close" @click="showModal = false">&times;</button>
 
 				<div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px">
-					<span class="logo"><i></i>eliza</span>
+					<img src="/eliza-logo-dark.png" alt="Eliza HR" style="height: 24px; width: auto" />
 					<span class="pill" style="margin-left: 8px">14-Day Free Trial</span>
 				</div>
 
@@ -684,20 +686,27 @@ header .w {
 }
 
 .logo {
-	font-weight: 600;
-	font-size: 20px;
-	letter-spacing: -0.04em;
 	display: flex;
-	gap: 8px;
 	align-items: center;
-	color: var(--ink);
+	text-decoration: none;
 }
-.logo i {
-	width: 18px;
-	height: 18px;
-	border-radius: 50% 50% 50% 0;
-	background: var(--ink);
-	display: inline-block;
+.logo-img {
+	height: 30px;
+	width: auto;
+	max-width: 140px;
+	object-fit: contain;
+	display: block;
+}
+.logo-dark {
+	display: none;
+}
+@media (prefers-color-scheme: dark) {
+	.eliza-root:not([data-theme="light"]) .logo-light {
+		display: none;
+	}
+	.eliza-root:not([data-theme="light"]) .logo-dark {
+		display: block;
+	}
 }
 
 nav {

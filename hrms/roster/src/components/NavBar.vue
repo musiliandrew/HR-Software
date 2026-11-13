@@ -1,9 +1,8 @@
 <template>
 	<header class="h-14 bg-white border-b border-stone-200 px-6 sm:px-12 flex items-center justify-between font-sans">
 		<div class="flex items-center space-x-3 text-sm">
-			<router-link to="/" class="font-semibold text-lg tracking-tight text-stone-900 flex items-center gap-2 hover:opacity-80 transition">
-				<span class="w-4 h-4 rounded-full rounded-br-none bg-stone-900 inline-block"></span>
-				eliza
+			<router-link to="/" class="flex items-center hover:opacity-85 transition">
+				<img src="/eliza-logo-dark.png" alt="Eliza HR" class="h-6 w-auto object-contain" />
 			</router-link>
 			<span class="text-stone-300">/</span>
 			<router-link to="/desk/hr-setup" class="font-medium text-stone-900 hover:text-stone-600 transition">
