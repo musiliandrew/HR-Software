@@ -392,12 +392,100 @@ class HRBackendHandler(BaseHTTPRequestHandler):
             self._send_json(200, {"message": {"holidays": {}, "leaves": {}, "shifts": {}}})
             return
 
+        # 13. Notifications & Organizational Structure APIs
+        if "hrms.api.get_unread_notifications_count" in path:
+            self._send_json(200, {"message": 2})
+            return
+
+        if "hrms.api.get_notifications" in path:
+            self._send_json(200, {
+                "message": [
+                    {
+                        "id": 1,
+                        "title": "Leave Request Submitted",
+                        "message": "John Doe submitted an Annual Leave application for 3 days.",
+                        "time": "10 minutes ago",
+                        "unread": True,
+                        "type": "leave"
+                    },
+                    {
+                        "id": 2,
+                        "title": "Expense Claim Pending",
+                        "message": "Alice Smith submitted a claim for $109.47 (Equipment Supply).",
+                        "time": "1 hour ago",
+                        "unread": True,
+                        "type": "expense"
+                    },
+                    {
+                        "id": 3,
+                        "title": "Monthly Payroll Finalized",
+                        "message": "March 2026 payroll disbursal completed ($23,500 total).",
+                        "time": "Yesterday",
+                        "unread": False,
+                        "type": "payroll"
+                    }
+                ]
+            })
+            return
+
+        if "hrms.api.get_org_chart" in path:
+            conn = get_db()
+            employees = []
+            if conn:
+                cur = conn.cursor(cursor_factory=RealDictCursor)
+                cur.execute("SELECT name, employee_name, designation, department, reports_to, user_id FROM employees WHERE tenant_id = %s", (tenant_id,))
+                employees = cur.fetchall()
+                cur.close()
+                conn.close()
+            self._send_json(200, {"message": employees})
+            return
+
+        if "hrms.api.get_departments" in path:
+            conn = get_db()
+            departments = ["Management", "Engineering", "Operations", "Human Resources", "Design"]
+            if conn:
+                cur = conn.cursor()
+                cur.execute("SELECT DISTINCT department FROM employees WHERE tenant_id = %s AND department IS NOT NULL", (tenant_id,))
+                rows = [r[0] for r in cur.fetchall() if r[0]]
+                if rows:
+                    departments = rows
+                cur.close()
+                conn.close()
+            self._send_json(200, {"message": departments})
+            return
+
+        if "hrms.api.get_designations" in path:
+            conn = get_db()
+            designations = ["HR Director", "Senior Software Engineer", "Field Supervisor", "Lead Product Designer"]
+            if conn:
+                cur = conn.cursor()
+                cur.execute("SELECT DISTINCT designation FROM employees WHERE tenant_id = %s AND designation IS NOT NULL", (tenant_id,))
+                rows = [r[0] for r in cur.fetchall() if r[0]]
+                if rows:
+                    designations = rows
+                cur.close()
+                conn.close()
+            self._send_json(200, {"message": designations})
+            return
+
+        if "hrms.api.get_salary_slips" in path:
+            conn = get_db()
+            slips = []
+            if conn:
+                cur = conn.cursor(cursor_factory=RealDictCursor)
+                cur.execute("SELECT name, employee, employee_name, net_pay, gross_pay, total_deduction, status, start_date, end_date FROM salary_slips WHERE tenant_id = %s ORDER BY id DESC LIMIT 10", (tenant_id,))
+                slips = cur.fetchall()
+                cur.close()
+                conn.close()
+            self._send_json(200, {"message": slips})
+            return
+
         # Fallbacks
         if "hrms.api.system_settings.get_user_pass_login_disabled" in path:
             self._send_json(200, {"message": 0})
             return
-        if "hrms.api.oauth.oauth_providers" in path or "hrms.api.get_unread_notifications_count" in path:
-            self._send_json(200, {"message": [] if "oauth" in path else 0})
+        if "hrms.api.oauth.oauth_providers" in path:
+            self._send_json(200, {"message": []})
             return
 
         self._send_json(200, {"message": []})
