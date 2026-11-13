@@ -43,22 +43,12 @@
 					</form>
 				</div>
 
-				<div class="phone">
-					<small>Welcome back to Eliza</small>
-					<b>Crew overview</b>
-					<div class="kp">
-						<div>Hours today<strong>312</strong></div>
-						<div>On site<strong>4</strong></div>
-						<div>Crews<strong>253</strong></div>
-					</div>
-					<div class="bars">
-						<span style="height: 40%"></span>
-						<span style="height: 75%"></span>
-						<span style="height: 55%"></span>
-						<span style="height: 90%"></span>
-						<span style="height: 35%"></span>
-						<span style="height: 65%"></span>
-					</div>
+				<div class="hero-graphic">
+					<img
+						src="/welcomeback-hero.jpg"
+						alt="Welcome back to Eliza - Crew & Workforce Overview"
+						class="hero-img"
+					/>
 				</div>
 			</div>
 
@@ -584,7 +574,7 @@ async function submitRegistration() {
 <style scoped>
 /* Eliza – The Connected Construction Platform Exact Design System */
 .eliza-root {
-	--bg: #f6f4ef;
+	--bg: #f3ede1;
 	--surface: #fff;
 	--ink: #1a1a1a;
 	--mute: #6b6a66;
@@ -776,64 +766,23 @@ nav a:hover {
 	min-width: 0;
 }
 
-.phone {
-	justify-self: center;
-	width: 280px;
-	background: var(--surface);
-	border: 1px solid var(--line);
-	border-radius: 28px 28px 0 0;
-	padding: 20px 18px 0;
-	height: 360px;
-	box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
-}
-.phone small {
-	color: var(--mute);
-	font-size: 12px;
-}
-.phone b {
-	display: block;
-	font-size: 15px;
-	margin-bottom: 12px;
-	font-weight: 500;
-	color: var(--ink);
-}
-
-.kp {
+.hero-graphic {
+	justify-self: end;
+	width: 100%;
+	max-width: 540px;
 	display: flex;
-	gap: 8px;
-	margin-bottom: 14px;
-}
-.kp div {
-	flex: 1;
-	border: 1px solid var(--line);
-	border-radius: 8px;
-	padding: 8px;
-	font-size: 11px;
-	color: var(--mute);
-}
-.kp strong {
-	display: block;
-	font-size: 20px;
-	color: var(--ink);
-	font-weight: 500;
-}
-
-.bars {
-	display: flex;
-	gap: 10px;
 	align-items: flex-end;
-	height: 110px;
-	border-bottom: 1px solid var(--line);
-	padding: 0 4px;
+	justify-content: center;
+	align-self: end;
 }
-.bars span {
-	flex: 1;
-	background: var(--maroon);
-	opacity: 0.85;
-	border-radius: 3px 3px 0 0;
-}
-.bars span:nth-child(odd) {
-	background: var(--sand);
+.hero-img {
+	width: 100%;
+	height: auto;
+	max-height: 440px;
+	object-fit: contain;
+	object-position: bottom;
+	display: block;
+	border-radius: 16px 16px 0 0;
 }
 
 .trust {
@@ -1311,8 +1260,13 @@ footer {
 	header .w {
 		justify-content: space-between;
 	}
-	.phone {
-		height: 300px;
+	.hero-graphic {
+		justify-self: center;
+		max-width: 100%;
+		margin-top: 24px;
+	}
+	.hero-img {
+		max-height: 320px;
 	}
 }
 </style>
